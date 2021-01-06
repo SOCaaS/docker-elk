@@ -16,7 +16,8 @@ services:
       discovery.type: single-node
     restart: on-failure
     networks:
-      - main
+      main:
+          ipv4_address: 10.0.2.15
 
   logstash:
     build:
@@ -39,6 +40,9 @@ services:
     networks:
       - main
     restart: on-failure
+    networks:
+      main:
+          ipv4_address: 10.0.2.11
     depends_on:
       - elasticsearch
 
