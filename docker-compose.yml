@@ -14,17 +14,12 @@ services:
       - type: volume
         source: elasticsearch
         target: /usr/share/elasticsearch/data
-    ports:
-      - "9200:9200"
-      - "9300:9300"
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
-      ELASTIC_PASSWORD: changeme
-      # Use single node discovery in order to disable production mode and avoid bootstrap checks.
-      # see: https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+      ELASTIC_PASSWORD: whenguardian2021
       discovery.type: single-node
     networks:
-      - elk
+      - main
 
   logstash:
     build:
@@ -40,15 +35,10 @@ services:
         source: ./logstash/pipeline
         target: /usr/share/logstash/pipeline
         read_only: true
-    ports:
-      - "5044:5044"
-      - "5000:5000/tcp"
-      - "5000:5000/udp"
-      - "9600:9600"
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     networks:
-      - elk
+      - main
     depends_on:
       - elasticsearch
 
@@ -62,16 +52,15 @@ services:
         source: ./kibana/config/kibana.yml
         target: /usr/share/kibana/config/kibana.yml
         read_only: true
-    ports:
-      - "5601:5601"
     networks:
-      - elk
+      - main
     depends_on:
       - elasticsearch
 
 networks:
-  elk:
-    driver: bridge
+  main:
+    external:
+      name : main-overlay
 
 volumes:
   elasticsearch:
