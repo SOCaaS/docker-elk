@@ -14,6 +14,7 @@ services:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
       ELASTIC_PASSWORD: whenguardian2021
       discovery.type: single-node
+    restart: on-failure
     networks:
       - main
 
@@ -26,6 +27,7 @@ services:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     networks:
       - main
+    restart: on-failure
     depends_on:
       - elasticsearch
 
@@ -36,6 +38,7 @@ services:
         ELK_VERSION: $ELK_VERSION
     networks:
       - main
+    restart: on-failure
     depends_on:
       - elasticsearch
 
