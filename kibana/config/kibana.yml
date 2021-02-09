@@ -4,6 +4,7 @@
 #
 server.name: kibana
 server.host: 0.0.0.0
+server.maxPayloadBytes: 10485760
 elasticsearch.hosts: [ "http://elasticsearch:9200" ]
 monitoring.ui.container.elasticsearch.enabled: true
 
