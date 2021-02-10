@@ -11,7 +11,7 @@ services:
         source: elasticsearch
         target: /usr/share/elasticsearch/data
     environment:
-      ES_JAVA_OPTS: "-Xmx4g -Xms1g"
+      ES_JAVA_OPTS: "-Xmx8g -Xms1g"
       ELASTIC_PASSWORD: whenguardian2021
       discovery.type: single-node
     restart: on-failure
