@@ -12,7 +12,7 @@ services:
         target: /usr/share/elasticsearch/data
     environment:
       - node.name=elasticsearch
-      - "ES_JAVA_OPTS=-Xmx6g -Xms6g"
+      - "ES_JAVA_OPTS=-Xmx4g -Xms4g"
       - cluster.name=es-docker-cluster
       - "ELASTIC_PASSWORD=whenguardian2021"
       - discovery.seed_hosts=elasticsearch2
@@ -31,7 +31,7 @@ services:
         target: /usr/share/elasticsearch/data
     environment:
       - node.name=elasticsearch2
-      - "ES_JAVA_OPTS=-Xmx6g -Xms6g"
+      - "ES_JAVA_OPTS=-Xmx4g -Xms4g"
       - cluster.name=es-docker-cluster
       - "ELASTIC_PASSWORD=whenguardian2021"
       - discovery.seed_hosts=elasticsearch
