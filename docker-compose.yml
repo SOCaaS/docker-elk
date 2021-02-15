@@ -27,7 +27,7 @@ services:
         ELK_VERSION: $ELK_VERSION
     volumes:
       - type: volume
-        source: elasticsearch
+        source: elasticsearch2
         target: /usr/share/elasticsearch/data
     environment:
       - node.name=elasticsearch2
