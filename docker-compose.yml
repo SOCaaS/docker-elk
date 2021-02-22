@@ -14,6 +14,7 @@ services:
       - node.name=elasticsearch
       - "ES_JAVA_OPTS=-Xmx4g -Xms4g"
       - cluster.name=es-docker-cluster
+      - cluster.initial_master_nodes=elasticsearch, elasticsearch2
       - "ELASTIC_PASSWORD=whenguardian2021"
       - discovery.seed_hosts=elasticsearch2
     restart: on-failure
@@ -30,6 +31,7 @@ services:
       - node.name=elasticsearch2
       - "ES_JAVA_OPTS=-Xmx4g -Xms4g"
       - cluster.name=es-docker-cluster
+      - cluster.initial_master_nodes=elasticsearch, elasticsearch2
       - "ELASTIC_PASSWORD=whenguardian2021"
       - discovery.seed_hosts=elasticsearch
     restart: on-failure
