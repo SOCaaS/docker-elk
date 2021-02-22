@@ -21,10 +21,7 @@ services:
       main:
           ipv4_address: 10.0.2.15
   elasticsearch2:
-    build:
-      context: elasticsearch/
-      args:
-        ELK_VERSION: $ELK_VERSION
+    image: "elasticsearch"
     volumes:
       - type: volume
         source: elasticsearch2
