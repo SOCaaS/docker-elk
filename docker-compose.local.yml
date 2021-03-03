@@ -16,7 +16,7 @@ services:
       - "9300:9300"
     environment:
       - node.name=elasticsearch
-      - "ES_JAVA_OPTS=-Xmx256g -Xms256g"
+      - "ES_JAVA_OPTS=-Xmx256m -Xms256m"
       - cluster.name=es-docker-cluster
       - "ELASTIC_PASSWORD=whenguardian2021"
       - discovery.type=single-node
