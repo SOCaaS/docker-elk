@@ -26,4 +26,4 @@ COPY --from=node /usr/agent-controller.zip /usr/share/kibana/agent-controller.zi
 ADD config/kibana.yml /usr/share/kibana/config/kibana.yml
 
 # Add your kibana plugins setup here
-RUN kibana-plugin install <name|url>
+RUN kibana-plugin install file:///usr/share/kibana/agent-controller.zip
