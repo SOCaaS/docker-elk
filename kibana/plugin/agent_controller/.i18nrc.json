@@ -1,0 +1,7 @@
+{
+  "prefix": "agentController",
+  "paths": {
+    "agentController": "."
+  },
+  "translations": ["translations/ja-JP.json"]
+}

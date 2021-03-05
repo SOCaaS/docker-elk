@@ -46,7 +46,7 @@ services:
       args:
         ELK_VERSION: $ELK_VERSION
     environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      LS_JAVA_OPTS: "-Xmx2g -Xms2g"
     networks:
       main:
           ipv4_address: 10.0.2.13
