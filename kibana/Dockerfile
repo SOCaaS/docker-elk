@@ -1,6 +1,6 @@
-ARG ELK_VERSION
-
 FROM node:latest as node
+
+ARG ELK_VERSION
 
 WORKDIR /usr/kibana/plugin
 
@@ -22,6 +22,8 @@ RUN ls
 
 # https://www.docker.elastic.co/
 FROM docker.elastic.co/kibana/kibana:${ELK_VERSION}
+
+ARG ELK_VERSION
 
 COPY --from=node /usr/agent-controller.zip /usr/share/kibana/agent-controller.zip
 
