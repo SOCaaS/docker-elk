@@ -16,7 +16,7 @@ WORKDIR /usr/app/kibana
 
 RUN yarn kbn bootstrap
 
-COPY agent_controller /usr/app/kibana/plugins/agent_controller
+COPY plugin/agent_controller /usr/app/kibana/plugins/agent_controller
 
 WORKDIR /usr/app/kibana/plugins/agent_controller
 
