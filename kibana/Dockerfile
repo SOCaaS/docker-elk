@@ -21,9 +21,9 @@ RUN zip -r agent-controller_$ELK_VERSION.zip kibana
 # https://www.docker.elastic.co/
 FROM docker.elastic.co/kibana/kibana:${ELK_VERSION}
 
-COPY --from=node /usr/agent-controller.zip /usr/share/kibana/agent-controller.zip
+COPY --from=node /usr/agent-controller_$ELK_VERSION.zip /usr/share/kibana/agent-controller_$ELK_VERSION.zip
 
 ADD config/kibana.yml /usr/share/kibana/config/kibana.yml
 
 # Add your kibana plugins setup here
-RUN kibana-plugin install file:///usr/share/kibana/agent-controller.zip
+RUN kibana-plugin install file:///usr/share/kibana/agent-controller_$ELK_VERSION.zip
