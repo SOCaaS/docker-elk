@@ -1,3 +1,5 @@
+FROM node:latest as node
+
 ARG ELK_VERSION
 
 # https://www.docker.elastic.co/
