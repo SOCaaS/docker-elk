@@ -12,6 +12,8 @@ RUN npm install
 
 WORKDIR  /usr
 
+RUN apt update
+
 RUN apt -y install zip
 
 RUN zip -r agent-controller_$ELK_VERSION.zip kibana
