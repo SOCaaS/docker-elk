@@ -1,3 +1,5 @@
+ARG ELK_VERSION
+
 FROM node:latest as node
 
 ARG ELK_VERSION
