@@ -28,7 +28,7 @@ import {
   EuiCode,
   EuiFlexGroup,
   EuiTextAlign,
-  EuiSelect
+  EuiSelect,
   
 } from '@elastic/eui';
 
@@ -221,40 +221,37 @@ export const AgentControllerApp = ({
                       </EuiFlexItem>
                     </EuiFlexGroup>
               {/* </EuiPanel> */}
-
-              <EuiPageContent>
-                <EuiPageContentHeader>
-                  <EuiTitle>
-                    <h2>
-                      <FormattedMessage
-                        id="agentController.congratulationsTitle"
-                        defaultMessage="Congratulations, you have successfully created a new Kibana Plugin!"
-                      />
-                    </h2>
-                  </EuiTitle>
-                </EuiPageContentHeader>
-                <EuiPageContentBody>
-                  <EuiText>
-                    <p>
-                      <FormattedMessage
-                        id="agentController.content"
-                        defaultMessage="Look through the generated code and check out the plugin development documentation."
-                      />
-                    </p>
-                    <EuiHorizontalRule />
-                    <p>
-                      <FormattedMessage
-                        id="agentController.timestampText"
-                        defaultMessage="Last timestamp: {time}"
-                        values={{ time: timestamp ? timestamp : 'Unknown' }}
-                      />
-                    </p>
-                    <EuiButton type="primary" size="s" onClick={onClickHandler}>
-                      <FormattedMessage id="agentController.buttonText" defaultMessage="Get data" />
-                    </EuiButton>
-                  </EuiText>
-                </EuiPageContentBody>
-              </EuiPageContent>
+              <EuiSpacer/>
+                <EuiFlexGroup gutterSize="none">
+                  <EuiFlexItem>
+                    <EuiTitle>
+                      <h2>Rules</h2>
+                    </EuiTitle>
+                    <EuiSpacer/>
+                    <EuiPanel>
+                      <EuiFlexGroup gutterSize="none">
+                        <EuiFlexItem></EuiFlexItem>
+                      </EuiFlexGroup>
+                    </EuiPanel>
+                  </EuiFlexItem>
+                  <EuiFlexItem>
+                    <EuiTitle>
+                      <h2>Control Center</h2>
+                    </EuiTitle>
+                    <EuiSpacer/>
+                    <EuiPanel paddingSize="l">
+                      <EuiFlexGroup gutterSize="none">
+                        <EuiFlexItem>
+                          <EuiSwitch
+                            label="Rule DoS"
+                            checked={checked}
+                            onChange={(e) => onChange(e)}
+                          />
+                        </EuiFlexItem>
+                      </EuiFlexGroup>
+                    </EuiPanel>
+                  </EuiFlexItem>
+                </EuiFlexGroup>
             </EuiPageBody>
           </EuiPage>
         </>
