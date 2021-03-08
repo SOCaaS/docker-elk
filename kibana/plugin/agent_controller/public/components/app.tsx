@@ -126,10 +126,10 @@ export const AgentControllerApp = ({
   ];
 
   // Generate the agent service to side navigation
-  for (let i = 1; i < 20; i++) {
+  for (let i = 1; i < 10; i++) {
     sideNav[0].items.push(
       createItem(
-        'Agent Service '+i.toString(), {
+        'Agent '+i.toString(), {
         items: [
           createItem('TShark', {}, "Tshark "+i.toString()), 
           createItem('Suricata', {},"Suricata "+i.toString()),
@@ -145,18 +145,7 @@ export const AgentControllerApp = ({
       <I18nProvider>
         <>
           <EuiPage>
-            <EuiPageBody>
-              <EuiPageHeader>
-                <EuiTitle size="l">
-                  <h1>
-                    <FormattedMessage
-                      id="agentController.helloWorldText"
-                      defaultMessage="{name}"
-                      values={{ name: PLUGIN_NAME }}
-                    />
-                  </h1>
-                </EuiTitle>
-              </EuiPageHeader>
+            <EuiPageSideBar>
               <EuiPageContent>
                 <EuiSideNav
                   aria-label="Force-open example"
@@ -164,15 +153,26 @@ export const AgentControllerApp = ({
                   toggleOpenOnMobile={toggleOpenOnMobile}
                   isOpenOnMobile={isSideNavOpenOnMobile}
                   items={sideNav}
-                  style={{ width: 192 }}
                 />
               </EuiPageContent>
-              <EuiPageContent>
-                <EuiSpacer size="xl" />
-                <EuiPageHeader iconType="logoElastic" pageTitle="Suricata" />
-                <EuiFlexGroup gutterSize="l">
-                  <EuiPanel paddingSize="l">
-                    <EuiFlexGroup gutterSize="l">
+            </EuiPageSideBar>
+            <EuiPageBody>
+              <EuiPageHeader>
+                  <EuiTitle size="l">
+                    <h1>
+                      <FormattedMessage
+                        id="agentController.title"
+                        defaultMessage="{name}"
+                        values={{ name: PLUGIN_NAME }}
+                      />
+                    </h1>
+                  </EuiTitle>
+                </EuiPageHeader>
+              {/* <EuiPanel paddingSize="none" color="transparent"> */}
+              <EuiFlexGroup gutterSize="none" >
+                <EuiFlexItem>
+                  <EuiPanel >
+                    <EuiFlexGroup gutterSize="none" >
                       <EuiFlexItem>
                         <EuiSwitch
                           label="Active"
@@ -185,10 +185,11 @@ export const AgentControllerApp = ({
                       </EuiFlexItem>
                     </EuiFlexGroup>
                   </EuiPanel>
-                  <EuiPanel paddingSize="l">
-                    <EuiFlexGroup gutterSize="l">
-                      <EuiText>Status</EuiText>
-                      <EuiFlexItem></EuiFlexItem>
+                  </EuiFlexItem>
+                  <EuiFlexItem>
+                  <EuiPanel >
+                  <EuiText>Status</EuiText>
+                    <EuiFlexGroup gutterSize="none" >
                       <EuiFlexItem>
                         <EuiText>CPU:</EuiText>
                       </EuiFlexItem>
@@ -197,28 +198,30 @@ export const AgentControllerApp = ({
                       </EuiFlexItem>
                     </EuiFlexGroup>
                   </EuiPanel>
+                  </EuiFlexItem>
                 </EuiFlexGroup>
-                <EuiFlexGroup>
-                  <EuiPageContent>
-                    <EuiPageContentBody>
-                      <EuiFlexGroup gutterSize="l">
-                        <EuiFlexItem>
-                          <EuiText>Interface</EuiText>
-                        </EuiFlexItem>
-                        <EuiFlexItem>
-                          <EuiSelect
-                            id="selectDocExample"
-                            options={options}
-                            value={value}
-                            onChange={(e) => onChangeFilter(e)}
-                            aria-label="Use aria labels when no actual label is in use"
-                          />{" "}
-                        </EuiFlexItem>
-                      </EuiFlexGroup>
-                    </EuiPageContentBody>
-                  </EuiPageContent>
-                </EuiFlexGroup>
-              </EuiPageContent>
+                    <EuiFlexGroup gutterSize="none">
+                    <EuiFlexItem>
+                      <EuiPanel>
+                      <EuiFlexGroup gutterSize="none">
+                          <EuiFlexItem>
+                            <EuiText>Interface</EuiText>
+                          </EuiFlexItem>
+                          <EuiFlexItem>
+                            <EuiSelect
+                              id="selectDocExample"
+                              options={options}
+                              value={value}
+                              onChange={(e) => onChangeFilter(e)}
+                              aria-label="Use aria labels when no actual label is in use"
+                            />
+                          </EuiFlexItem>
+                          </EuiFlexGroup>
+                        </EuiPanel>
+                      </EuiFlexItem>
+                    </EuiFlexGroup>
+              {/* </EuiPanel> */}
+
               <EuiPageContent>
                 <EuiPageContentHeader>
                   <EuiTitle>
