@@ -2,34 +2,30 @@ import React, { useState } from 'react';
 import { i18n } from '@kbn/i18n';
 import { FormattedMessage, I18nProvider } from '@kbn/i18n/react';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { createDataStore } from "../data_store/data_store.ts";
 
 import {
-  EuiButton,
-  EuiHorizontalRule,
-  EuiPage,
-  EuiPageBody,
-  EuiPageContent,
-  EuiPageContentBody,
-  EuiPageContentHeader,
-  EuiPageHeader,
-  EuiTitle,
-  EuiText,
-  EuiSideNav,
-  EuiIcon,
-  EuiPageTemplate,
-  EuiPageSideBar,
-  EuiSpacer,
-  EuiHeader,
-  EuiHeaderLogo,
-  EuiSwitch,
-  EuiFlexGrid,
-  EuiFlexItem,
-  EuiPanel,
-  EuiCode,
-  EuiFlexGroup,
-  EuiTextAlign,
-  EuiSelect,
-  
+    EuiPage,
+    EuiPageBody,
+    EuiPageContent,
+    EuiPageHeader,
+    EuiTitle,
+    EuiText,
+    EuiSideNav,
+    EuiIcon,
+    EuiPageSideBar,
+    EuiSpacer,
+    EuiSwitch,
+    EuiFlexItem,
+    EuiPanel,
+    EuiFlexGroup,
+    EuiSelect,
+    EuiBasicTable,
+    EuiButtonIcon,
+    EuiButton,
+    EuiDescriptionList,
+    EuiHeaderLogo
+
 } from '@elastic/eui';
 
 import { CoreStart } from '../../../../src/core/public';
@@ -50,6 +46,135 @@ export const AgentControllerApp = ({
   http,
   navigation,
 }: AgentControllerAppDeps) => {
+  //EuiBasicTable
+  const store = createDataStore();
+
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(5);
+  const [sortField, setSortField] = useState("ruleName");
+  const [sortDirection, setSortDirection] = useState("asc");
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [itemIdToExpandedRowMap, setItemIdToExpandedRowMap] = useState({});
+
+  const onTableChange = ({ page = {}, sort = {} }) => {
+    const { index: pageIndex, size: pageSize } = page;
+
+    const { field: sortField, direction: sortDirection } = sort;
+
+    setPageIndex(pageIndex);
+    setPageSize(pageSize);
+    setSortField(sortField);
+    setSortDirection(sortDirection);
+  };
+
+  // const onSelectionChange = (selectedItems) => {
+  //   setSelectedItems(selectedItems);
+  // };
+
+  const onClickDelete = () => {
+    store.deleteUsers(...selectedItems.map((user) => user.id));
+
+    setSelectedItems([]);
+  };
+
+  const renderDeleteButton = () => {
+    if (selectedItems.length === 0) {
+      return;
+    }
+    return (
+      <EuiButton color="danger" iconType="trash" onClick={onClickDelete}>
+        Delete {selectedItems.length} Users
+      </EuiButton>
+    );
+  };
+
+  const toggleDetails = (item) => {
+    const itemIdToExpandedRowMapValues = { ...itemIdToExpandedRowMap };
+    if (itemIdToExpandedRowMapValues[item.id]) {
+      delete itemIdToExpandedRowMapValues[item.id];
+    } else {
+      const listItems = [
+        {
+          description: `${item.ruleSet}`
+        }
+      ];
+      itemIdToExpandedRowMapValues[item.id] = (
+        <EuiDescriptionList listItems={listItems} />
+      );
+    }
+    setItemIdToExpandedRowMap(itemIdToExpandedRowMapValues);
+  };
+
+  const { pageOfItems, totalItemCount } = store.findUsers(
+    pageIndex,
+    pageSize,
+    sortField,
+    sortDirection
+  );
+
+  const deleteButton = renderDeleteButton();
+
+  const columns = [
+    {
+      field: "ruleName",
+      name: "Rule",
+      sortable: true,
+      truncateText: true,
+      mobileOptions: {
+        render: (item) => <span>{item.ruleName}</span>,
+        header: false,
+        truncateText: false,
+        enlarge: true,
+        fullWidth: true
+      }
+    },
+
+    {
+      name: "Actions",
+      actions: [
+        {
+          name: "Clone",
+          description: "Clone this person",
+          type: "icon",
+          icon: "pencil",
+          onClick: () => ""
+        }
+      ]
+    },
+    {
+      width: "40px",
+      isExpander: true,
+      render: (item) => (
+        <EuiButtonIcon
+          onClick={() => toggleDetails(item)}
+          aria-label={itemIdToExpandedRowMap[item.id] ? "Collapse" : "Expand"}
+          iconType={itemIdToExpandedRowMap[item.id] ? "arrowUp" : "arrowDown"}
+        />
+      )
+    }
+  ];
+
+  const pagination = {
+    pageIndex: pageIndex,
+    pageSize: pageSize,
+    totalItemCount: totalItemCount,
+    pageSizeOptions: [3, 5, 8]
+  };
+
+  const sorting = {
+    sort: {
+      field: sortField,
+      direction: sortDirection
+    }
+  };
+
+  const selection = {
+    selectable: (user) => user.status
+    // selectableMessage: (selectable) =>
+    //   !selectable ? "User is currently offline" : undefined,
+    // onSelectionChange: onSelectionChange
+  };
+
   // Use React hooks to manage state.
   const [timestamp, setTimestamp] = useState<string | undefined>();
 
@@ -131,7 +256,7 @@ export const AgentControllerApp = ({
       createItem(
         'Agent '+i.toString(), {
         items: [
-          createItem('TShark', {}, "Tshark "+i.toString()), 
+          createItem('TShark', {}, "Tshark "+i.toString()),
           createItem('Suricata', {},"Suricata "+i.toString()),
         ],
     }, "agentService"+ i.toString()));
@@ -230,7 +355,22 @@ export const AgentControllerApp = ({
                     <EuiSpacer/>
                     <EuiPanel>
                       <EuiFlexGroup gutterSize="none">
-                        <EuiFlexItem></EuiFlexItem>
+                        <EuiFlexItem>
+                          {deleteButton}
+                          <EuiBasicTable
+                            items={pageOfItems}
+                            itemId="id"
+                            itemIdToExpandedRowMap={itemIdToExpandedRowMap}
+                            isExpandable={true}
+                            hasActions={true}
+                            columns={columns}
+                            pagination={pagination}
+                            sorting={sorting}
+                            isSelectable={true}
+                            selection={selection}
+                            onChange={onTableChange}
+                          />
+                        </EuiFlexItem>
                       </EuiFlexGroup>
                     </EuiPanel>
                   </EuiFlexItem>
