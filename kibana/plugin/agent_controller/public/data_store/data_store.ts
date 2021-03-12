@@ -1,8 +1,6 @@
 import { Comparators } from "../comparators/comparators";
 import { times } from "../utils/utils";
 
-// import { Comparators } from "../dependencies";
-// import { times } from "../dependencies";
 const ruleSet = [
   "Very long first name that will wrap or be truncated",
   "Another very long first name which will wrap or be truncated",
@@ -15,7 +13,7 @@ const ruleName = [
   "Igor",
 ];
 
-const createUsers = () => {
+const createRules = () => {
   return times(10, (index) => {
     return {
       id: index,
@@ -27,22 +25,22 @@ const createUsers = () => {
 };
 
 export const createDataStore = () => {
-  const users = createUsers();
+  const rules = createRules();
 
   return {
-    users,
+    rules,
 
-    findUsers: (pageIndex, pageSize, sortField, sortDirection) => {
+    findRules: (pageIndex, pageSize, sortField, sortDirection) => {
       let items;
 
       if (sortField) {
-        items = users
+        items = rules
           .slice(0)
           .sort(
             Comparators.property(sortField, Comparators.default(sortDirection))
           );
       } else {
-        items = users;
+        items = rules;
       }
 
       let pageOfItems;
@@ -63,21 +61,21 @@ export const createDataStore = () => {
       };
     },
 
-    deleteUsers: (...ids) => {
+    deleteRules: (...ids) => {
       ids.forEach((id) => {
-        const index = users.findIndex((user) => user.id === id);
+        const index = rules.findIndex((rule) => rule.id === id);
         if (index >= 0) {
-          users.splice(index, 1);
+          rules.splice(index, 1);
         }
       });
     },
 
-    cloneUser: (id) => {
-      const index = users.findIndex((user) => user.id === id);
-      if (index >= 0) {
-        const user = users[index];
-        users.splice(index, 0, { ...user, id: users.length });
-      }
-    }
+    // cloneRule: (id) => {
+    //   const index = rules.findIndex((rule) => rule.id === id);
+    //   if (index >= 0) {
+    //     const rule = rules[index];
+    //     rules.splice(index, 0, { ...rule, id: rules.length });
+    //   }
+    // }
   };
 };

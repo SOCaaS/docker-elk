@@ -24,7 +24,13 @@ import {
     EuiButtonIcon,
     EuiButton,
     EuiDescriptionList,
-    EuiHeaderLogo
+    EuiHeaderLogo,
+    EuiTextArea,
+    EuiModal,
+    EuiModalBody,
+    EuiModalFooter,
+    EuiModalHeader,
+    EuiModalHeaderTitle
 
 } from '@elastic/eui';
 
@@ -40,12 +46,120 @@ interface AgentControllerAppDeps {
   navigation: NavigationPublicPluginStart;
 }
 
+class myModal {
+  constructor(
+    isModalVisible,
+    setIsModalVisible,
+    valueRule,
+    setValueRule,
+    text
+  ) {
+    this.isModalVisible = isModalVisible;
+    this.setIsModalVisible = setIsModalVisible;
+    this.valueRule = valueRule;
+    this.setValueRule = setValueRule;
+    let modal;
+    this.modal = modal;
+    this.text = text;
+  }
+  onChangeText = (e) => {
+    this.setValueRule(e.target.valueRule);
+  };
+  closeModal() {
+    this.setIsModalVisible(false);
+  }
+  saveModal() {
+    this.setIsModalVisible(false);
+  }
+  showModal() {
+    this.setIsModalVisible(true);
+  }
+  checkModalvisible() {
+    if (this.isModalVisible) {
+      this.modal = (
+        <EuiModal
+          onClose={() => {
+            this.closeModal();
+          }}
+        >
+          <EuiModalHeader>
+            <EuiModalHeaderTitle>{this.text} Rule Name</EuiModalHeaderTitle>
+          </EuiModalHeader>
+          <EuiModalBody>
+            <EuiText>
+              <EuiTextArea
+                placeholder="Rule Command"
+                aria-label="Rule Command"
+                value={this.valueRule}
+                onChange={(e) => this.onChangeText(e)}
+              />
+            </EuiText>
+          </EuiModalBody>
+          <EuiModalFooter>
+            <EuiButton
+              onClick={() => {
+                this.saveModal();
+              }}
+            >
+              Save
+            </EuiButton>
+            <EuiSpacer />
+            <EuiButton
+              onClick={() => {
+                this.closeModal();
+              }}
+              fill
+            >
+              Close
+            </EuiButton>
+          </EuiModalFooter>
+        </EuiModal>
+      );
+    }
+    return this.modal;
+  }
+}
+
+class createSwitch {
+  constructor(checked, setChecked) {
+    this.checked = checked;
+    this.setChecked = setChecked;
+  }
+  onChange = (e) => {
+    this.setChecked(e.target.checked);
+  };
+}
+
 export const AgentControllerApp = ({
   basename,
   notifications,
   http,
   navigation,
 }: AgentControllerAppDeps) => {
+  //add and edit button
+  const [valueRuleAdd, setValueRuleAdd] = useState("");
+  const [valueRuleEdit, setValueRuleEdit] = useState("");
+
+  const [isModalVisibleAdd, setIsModalVisibleAdd] = useState(false);
+  const [isModalVisibleEdit, setIsModalVisibleEdit] = useState(false);
+
+  let createModalAdd = new myModal(
+    isModalVisibleAdd,
+    setIsModalVisibleAdd,
+    valueRuleAdd,
+    setValueRuleAdd,
+    "Add"
+  );
+  let createModalEdit = new myModal(
+    isModalVisibleEdit,
+    setIsModalVisibleEdit,
+    valueRuleEdit,
+    setValueRuleEdit,
+    "Edit"
+  );
+  let modalAdd = createModalAdd.checkModalvisible();
+  let modalEdit = createModalEdit.checkModalvisible();
+
   //EuiBasicTable
   const store = createDataStore();
 
@@ -67,13 +181,12 @@ export const AgentControllerApp = ({
     setSortDirection(sortDirection);
   };
 
-  // const onSelectionChange = (selectedItems) => {
-  //   setSelectedItems(selectedItems);
-  // };
+  const onSelectionChange = (selectedItems) => {
+    setSelectedItems(selectedItems);
+  };
 
   const onClickDelete = () => {
-    store.deleteUsers(...selectedItems.map((user) => user.id));
-
+    store.deleteRules(...selectedItems.map((rule) => rule.id));
     setSelectedItems([]);
   };
 
@@ -83,7 +196,7 @@ export const AgentControllerApp = ({
     }
     return (
       <EuiButton color="danger" iconType="trash" onClick={onClickDelete}>
-        Delete {selectedItems.length} Users
+        Delete {selectedItems.length} Rules
       </EuiButton>
     );
   };
@@ -105,7 +218,7 @@ export const AgentControllerApp = ({
     setItemIdToExpandedRowMap(itemIdToExpandedRowMapValues);
   };
 
-  const { pageOfItems, totalItemCount } = store.findUsers(
+  const { pageOfItems, totalItemCount } = store.findRules(
     pageIndex,
     pageSize,
     sortField,
@@ -133,11 +246,13 @@ export const AgentControllerApp = ({
       name: "Actions",
       actions: [
         {
-          name: "Clone",
-          description: "Clone this person",
+          name: "Edit",
+          description: "Edit Rule",
           type: "icon",
           icon: "pencil",
-          onClick: () => ""
+          onClick: () => {
+            createModalEdit.showModal();
+          }
         }
       ]
     },
@@ -169,10 +284,10 @@ export const AgentControllerApp = ({
   };
 
   const selection = {
-    selectable: (user) => user.status
+    selectable: (rule) => rule.status,
     // selectableMessage: (selectable) =>
-    //   !selectable ? "User is currently offline" : undefined,
-    // onSelectionChange: onSelectionChange
+    //   !selectable ? "Rule is currently offline" : undefined,
+    onSelectionChange: onSelectionChange
   };
 
   // Use React hooks to manage state.
@@ -199,12 +314,15 @@ export const AgentControllerApp = ({
       borders: "right"
     }
   ];
-  //switch
-  const [checked, setChecked] = useState(false);
+  //swtich Active
+  const [checkedActive, setCheckedActive] = useState(false);
+  let createSwitchActive = new createSwitch(checkedActive, setCheckedActive);
 
-  const onChange = (e) => {
-    setChecked(e.target.checked);
-  };
+  //switch Rule
+  const [checkedRule, setCheckedRule] = useState(false);
+  let createSwitchRule = new createSwitch(checkedRule, setCheckedRule);
+
+  //interface options
   const options = [
     { value: "option_one", text: "Option one" },
     { value: "option_two", text: "Option two" },
@@ -217,6 +335,7 @@ export const AgentControllerApp = ({
     setValue(e.target.value);
   };
 
+  //sidenav
   const [isSideNavOpenOnMobile, setIsSideNavOpenOnMobile] = useState(false);
   const [selectedItemName, setSelectedItem] = useState(null);
   console.log(setSelectedItem);
@@ -267,135 +386,152 @@ export const AgentControllerApp = ({
   // Note that `navigation.ui.TopNavMenu` is a stateful component exported on the `navigation` plugin's start contract.
   return (
     <Router basename={basename}>
-      <I18nProvider>
-        <>
-          <EuiPage>
-            <EuiPageSideBar>
-              <EuiPageContent>
-                <EuiSideNav
-                  aria-label="Force-open example"
-                  mobileTitle="Default"
-                  toggleOpenOnMobile={toggleOpenOnMobile}
-                  isOpenOnMobile={isSideNavOpenOnMobile}
-                  items={sideNav}
-                />
-              </EuiPageContent>
-            </EuiPageSideBar>
-            <EuiPageBody>
-              <EuiPageHeader>
-                  <EuiTitle size="l">
-                    <h1>
-                      <FormattedMessage
-                        id="agentController.title"
-                        defaultMessage="{name}"
-                        values={{ name: PLUGIN_NAME }}
-                      />
-                    </h1>
-                  </EuiTitle>
-                </EuiPageHeader>
-              {/* <EuiPanel paddingSize="none" color="transparent"> */}
-              <EuiFlexGroup gutterSize="none" >
-                <EuiFlexItem>
-                  <EuiPanel >
-                    <EuiFlexGroup gutterSize="none" >
-                      <EuiFlexItem>
-                        <EuiSwitch
-                          label="Active"
-                          checked={checked}
-                          onChange={(e) => onChange(e)}
-                        />
-                      </EuiFlexItem>
-                      <EuiFlexItem>
-                        <EuiText>IP: 192.168.12.0</EuiText>
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
-                  </EuiPanel>
-                  </EuiFlexItem>
-                  <EuiFlexItem>
-                  <EuiPanel >
-                  <EuiText>Status</EuiText>
-                    <EuiFlexGroup gutterSize="none" >
-                      <EuiFlexItem>
-                        <EuiText>CPU:</EuiText>
-                      </EuiFlexItem>
-                      <EuiFlexItem>
-                        <EuiText>Memory:</EuiText>
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
-                  </EuiPanel>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
-                    <EuiFlexGroup gutterSize="none">
-                    <EuiFlexItem>
-                      <EuiPanel>
-                      <EuiFlexGroup gutterSize="none">
-                          <EuiFlexItem>
-                            <EuiText>Interface</EuiText>
-                          </EuiFlexItem>
-                          <EuiFlexItem>
-                            <EuiSelect
-                              id="selectDocExample"
-                              options={options}
-                              value={value}
-                              onChange={(e) => onChangeFilter(e)}
-                              aria-label="Use aria labels when no actual label is in use"
-                            />
-                          </EuiFlexItem>
-                          </EuiFlexGroup>
-                        </EuiPanel>
-                      </EuiFlexItem>
-                    </EuiFlexGroup>
-              {/* </EuiPanel> */}
-              <EuiSpacer/>
-                <EuiFlexGroup gutterSize="none">
-                  <EuiFlexItem>
-                    <EuiTitle>
-                      <h2>Rules</h2>
-                    </EuiTitle>
-                    <EuiSpacer/>
-                    <EuiPanel>
-                      <EuiFlexGroup gutterSize="none">
-                        <EuiFlexItem>
-                          {deleteButton}
-                          <EuiBasicTable
-                            items={pageOfItems}
-                            itemId="id"
-                            itemIdToExpandedRowMap={itemIdToExpandedRowMap}
-                            isExpandable={true}
-                            hasActions={true}
-                            columns={columns}
-                            pagination={pagination}
-                            sorting={sorting}
-                            isSelectable={true}
-                            selection={selection}
-                            onChange={onTableChange}
-                          />
-                        </EuiFlexItem>
-                      </EuiFlexGroup>
-                    </EuiPanel>
-                  </EuiFlexItem>
-                  <EuiFlexItem>
-                    <EuiTitle>
-                      <h2>Control Center</h2>
-                    </EuiTitle>
-                    <EuiSpacer/>
-                    <EuiPanel paddingSize="l">
-                      <EuiFlexGroup gutterSize="none">
-                        <EuiFlexItem>
-                          <EuiSwitch
-                            label="Rule DoS"
-                            checked={checked}
-                            onChange={(e) => onChange(e)}
-                          />
-                        </EuiFlexItem>
-                      </EuiFlexGroup>
-                    </EuiPanel>
-                  </EuiFlexItem>
-                </EuiFlexGroup>
-            </EuiPageBody>
-          </EuiPage>
-        </>
-      </I18nProvider>
-    </Router>
+     <I18nProvider>
+       <>
+         <EuiPage>
+           <EuiPageSideBar>
+             <EuiPageContent>
+               <EuiSideNav
+                 aria-label="Force-open example"
+                 mobileTitle="Default"
+                 toggleOpenOnMobile={toggleOpenOnMobile}
+                 isOpenOnMobile={isSideNavOpenOnMobile}
+                 items={sideNav}
+               />
+             </EuiPageContent>
+           </EuiPageSideBar>
+           <EuiPageBody>
+             <EuiPageHeader>
+                 <EuiTitle size="l">
+                   <h1>
+                     <FormattedMessage
+                       id="agentController.title"
+                       defaultMessage="{name}"
+                       values={{ name: PLUGIN_NAME }}
+                     />
+                   </h1>
+                 </EuiTitle>
+               </EuiPageHeader>
+             {/* <EuiPanel paddingSize="none" color="transparent"> */}
+             <EuiFlexGroup gutterSize="none" >
+               <EuiFlexItem>
+                 <EuiPanel >
+                   <EuiFlexGroup gutterSize="none" >
+                     <EuiFlexItem>
+                       <EuiSwitch
+                         label="Active"
+                         checked={createSwitchActive.checked}
+                         onChange={(e) => createSwitchActive.onChange(e)}
+                       />
+                     </EuiFlexItem>
+                     <EuiFlexItem>
+                       <EuiText>IP: 192.168.12.0</EuiText>
+                     </EuiFlexItem>
+                   </EuiFlexGroup>
+                 </EuiPanel>
+                 </EuiFlexItem>
+                 <EuiFlexItem>
+                 <EuiPanel >
+                 <EuiText>Status</EuiText>
+                   <EuiFlexGroup gutterSize="none" >
+                     <EuiFlexItem>
+                       <EuiText>CPU:</EuiText>
+                     </EuiFlexItem>
+                     <EuiFlexItem>
+                       <EuiText>Memory:</EuiText>
+                     </EuiFlexItem>
+                   </EuiFlexGroup>
+                 </EuiPanel>
+                 </EuiFlexItem>
+               </EuiFlexGroup>
+                   <EuiFlexGroup gutterSize="none">
+                   <EuiFlexItem>
+                     <EuiPanel>
+                     <EuiFlexGroup gutterSize="none">
+                         <EuiFlexItem>
+                           <EuiText>Interface</EuiText>
+                         </EuiFlexItem>
+                         <EuiFlexItem>
+                           <EuiSelect
+                             id="selectDocExample"
+                             options={options}
+                             value={value}
+                             onChange={(e) => onChangeFilter(e)}
+                             aria-label="Use aria labels when no actual label is in use"
+                           />
+                         </EuiFlexItem>
+                         </EuiFlexGroup>
+                       </EuiPanel>
+                     </EuiFlexItem>
+                   </EuiFlexGroup>
+             {/* </EuiPanel> */}
+             <EuiSpacer/>
+               <EuiFlexGroup gutterSize="none">
+                 <EuiFlexItem>
+                   <EuiTitle>
+                     <h2>Rules</h2>
+                   </EuiTitle>
+                   <EuiSpacer/>
+                   <EuiPanel>
+                   <EuiFlexGroup gutterSize="none">
+                     <EuiFlexItem>
+                       <EuiFlexGroup gutterSize="xs">
+                         <EuiFlexItem>{deleteButton}</EuiFlexItem>
+                         <EuiFlexItem>
+                           <EuiButton
+                             color={"primary"}
+                             onClick={() => {
+                               createModalAdd.showModal();
+                             }}
+                             iconType="plusInCircle"
+                             aria-label="Next"
+                           >
+                             Add Rules
+                           </EuiButton>
+                         </EuiFlexItem>
+                       </EuiFlexGroup>
+
+                       <EuiBasicTable
+                         items={pageOfItems}
+                         itemId="id"
+                         itemIdToExpandedRowMap={itemIdToExpandedRowMap}
+                         isExpandable={true}
+                         hasActions={true}
+                         columns={columns}
+                         pagination={pagination}
+                         sorting={sorting}
+                         isSelectable={true}
+                         selection={selection}
+                         onChange={onTableChange}
+                       />
+                       {modalAdd}
+                       {modalEdit}
+                     </EuiFlexItem>
+                   </EuiFlexGroup>
+                   </EuiPanel>
+                 </EuiFlexItem>
+                 <EuiFlexItem>
+                   <EuiTitle>
+                     <h2>Control Center</h2>
+                   </EuiTitle>
+                   <EuiSpacer/>
+                   <EuiPanel paddingSize="l">
+                     <EuiFlexGroup gutterSize="none">
+                       <EuiFlexItem>
+                         <EuiSwitch
+                           label="Rule DoS"
+                           checked={createSwitchRule.checked}
+                           onChange={(e) => createSwitchRule.onChange(e)}
+                         />
+                       </EuiFlexItem>
+                     </EuiFlexGroup>
+                   </EuiPanel>
+                 </EuiFlexItem>
+               </EuiFlexGroup>
+           </EuiPageBody>
+         </EuiPage>
+       </>
+     </I18nProvider>
+   </Router>
   );
 };
