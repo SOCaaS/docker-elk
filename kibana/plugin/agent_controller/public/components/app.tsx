@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { i18n } from '@kbn/i18n';
 import { FormattedMessage, I18nProvider } from '@kbn/i18n/react';
-import { BrowserRouter as Router, Route, useHistory} from 'react-router-dom';
+import { BrowserRouter as Router, Route} from 'react-router-dom';
 import { createDataStore } from "../data_store/data_store.ts";
-import {mainSideNav} from './mainsidenav.tsx';
+import { mainSideNav }  from './mainsidenav.tsx';
 
 import {
     EuiPage,
@@ -131,8 +131,6 @@ class createSwitch {
   };
 }
 
-
-
 const ContentBody = ({match}) => {
   const {
     params: {agentService_id,agent_id}
@@ -152,6 +150,7 @@ export const AgentControllerApp = ({
   http,
   navigation,
 }: AgentControllerAppDeps) => {
+
   //add and edit button
   const [valueRuleAdd, setValueRuleAdd] = useState("");
   const [valueRuleEdit, setValueRuleEdit] = useState("");
