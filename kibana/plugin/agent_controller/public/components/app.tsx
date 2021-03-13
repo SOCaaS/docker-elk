@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { i18n } from '@kbn/i18n';
 import { FormattedMessage, I18nProvider } from '@kbn/i18n/react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Route, useHistory} from 'react-router-dom';
 import { createDataStore } from "../data_store/data_store.ts";
+import {mainSideNav} from './mainsidenav.tsx';
 
 import {
     EuiPage,
@@ -129,6 +130,21 @@ class createSwitch {
     this.setChecked(e.target.checked);
   };
 }
+
+
+
+const ContentBody = ({match}) => {
+  const {
+    params: {agentService_id,agent_id}
+  } = match;
+  
+  return(
+    <>
+      <h1> {agentService_id} </h1>
+      <h2> {agent_id} </h2>
+    </>
+  );
+};
 
 export const AgentControllerApp = ({
   basename,
@@ -335,53 +351,6 @@ export const AgentControllerApp = ({
     setValue(e.target.value);
   };
 
-  //sidenav
-  const [isSideNavOpenOnMobile, setIsSideNavOpenOnMobile] = useState(false);
-  const [selectedItemName, setSelectedItem] = useState(null);
-  console.log(setSelectedItem);
-  const toggleOpenOnMobile = () => {
-    setIsSideNavOpenOnMobile(!isSideNavOpenOnMobile);
-  };
-
-  const selectItem = (name) => {
-    setSelectedItem(name);
-  };
-
-  const createItem = (name, data = {}, id) => {
-    // NOTE: Duplicate `name` values will cause `id` collisions.
-    return {
-      ...data,
-      id: id,
-      name,
-      isSelected: selectedItemName === id,
-      onClick: () => selectItem(id)
-    };
-  };
-
-  const sideNav = [
-    createItem('Navigation', {
-      icon: <EuiIcon type="menu" />,
-      items: [
-          createItem('Default', {
-            items: [createItem('TShark', {}, "tshark"), createItem('Suricata', {},  "suricata")],
-          },"default"),
-        ],
-    }, "nav1"),
-  ];
-
-  // Generate the agent service to side navigation
-  for (let i = 1; i < 10; i++) {
-    sideNav[0].items.push(
-      createItem(
-        'Agent '+i.toString(), {
-        items: [
-          createItem('TShark', {}, "Tshark "+i.toString()),
-          createItem('Suricata', {},"Suricata "+i.toString()),
-        ],
-    }, "agentService"+ i.toString()));
-  }
-
-
   // Render the application DOM.
   // Note that `navigation.ui.TopNavMenu` is a stateful component exported on the `navigation` plugin's start contract.
   return (
@@ -389,17 +358,7 @@ export const AgentControllerApp = ({
      <I18nProvider>
        <>
          <EuiPage>
-           <EuiPageSideBar>
-             <EuiPageContent>
-               <EuiSideNav
-                 aria-label="Force-open example"
-                 mobileTitle="Default"
-                 toggleOpenOnMobile={toggleOpenOnMobile}
-                 isOpenOnMobile={isSideNavOpenOnMobile}
-                 items={sideNav}
-               />
-             </EuiPageContent>
-           </EuiPageSideBar>
+           <EuiPageSideBar sticky><Route path="/" component={mainSideNav} /></EuiPageSideBar>
            <EuiPageBody>
              <EuiPageHeader>
                  <EuiTitle size="l">
