@@ -1,20 +1,22 @@
-import {useHistory} from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { EuiSideNav, EuiIcon,} from '@elastic/eui';
+import React, { useState } from 'react';
 
-
-const mainSideNav = () => {
+export const mainSideNav = () => {
     const [isSideNavOpenOnMobile, setIsSideNavOpenOnMobile] = useState(false);
     const [selectedItemName, setSelectedItem] = useState("");
     const history = useHistory();
     const toggleOpenOnMobile = () => {
       setIsSideNavOpenOnMobile(!isSideNavOpenOnMobile);
     };
-  
+
+    // function used to select a nav item
     const selectItem = (name) => {
       setSelectedItem(name);
       history.push("/"+name);
     };
   
+    // function used to create a nav item
     const createItem = (name, data = {}, id) => {
       // NOTE: Duplicate `name` values will cause `id` collisions.
       return {
@@ -37,6 +39,10 @@ const mainSideNav = () => {
       }, "nav1"),
     ];
     
+    // http.get('/api/agent_controller/test').then((res) => {
+    //   console.log(res);
+    // });
+
     for (let i = 1; i < 10; i++) {
       let agent_num = "agentService"+ i.toString();
       sideNav[0].items.push(
