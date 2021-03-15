@@ -45,6 +45,7 @@ services:
   kibana:
     build:
       context: kibana/
+      dockerfile: Dockerfile.dev
       args:
         ELK_VERSION: $ELK_VERSION
     ports:
