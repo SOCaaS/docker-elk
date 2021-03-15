@@ -1,0 +1,23 @@
+ARG ELK_VERSION
+
+FROM ezeutno/kibana-cache:alpine as node
+
+ARG ELK_VERSION
+
+COPY plugin/agent_controller /usr/app/kibana/plugins/agent_controller
+
+WORKDIR /usr/app/kibana/plugins/agent_controller
+
+RUN  echo ${ELK_VERSION} | node ../../scripts/plugin_helpers.js build
+
+# https://www.docker.elastic.co/
+FROM docker.elastic.co/kibana/kibana:${ELK_VERSION}
+
+ARG ELK_VERSION
+
+COPY --from=node /usr/app/kibana/plugins/agent_controller/build/agentController-${ELK_VERSION}.zip /usr/share/kibana/agentController-${ELK_VERSION}.zip
+
+ADD config/kibana.yml /usr/share/kibana/config/kibana.yml
+
+# Add your kibana plugins setup here
+RUN kibana-plugin install file:///usr/share/kibana/agentController-${ELK_VERSION}.zip
