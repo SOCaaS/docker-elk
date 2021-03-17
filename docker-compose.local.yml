@@ -11,6 +11,9 @@ services:
       - type: volume
         source: elasticsearch
         target: /usr/share/elasticsearch/data
+      - type: bind
+        source: ./elasticsearch/config/elasticsearch-local.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -20,7 +23,7 @@ services:
       - node.name=elasticsearch
       - "ES_JAVA_OPTS=-Xmx256m -Xms256m"
       - cluster.name=es-docker-cluster
-      - "ELASTIC_PASSWORD=whenguardian2021"
+      # - "ELASTIC_PASSWORD=whenguardian2021"
       - discovery.type=single-node
     restart: on-failure
 
@@ -50,6 +53,10 @@ services:
         ELK_VERSION: $ELK_VERSION
     ports:
       - "5601:5601"
+    volumes:
+      - type: bind
+        source: ./kibana/config/kibana-local.yml
+        target: /usr/share/kibana/config/kibana.yml
     networks:
       - main
     restart: on-failure
