@@ -18,23 +18,23 @@ export function defineRoutes(router: IRouter) {
 
   router.get(
     {
-      path: '/api/agent_controller/test',
+      path: '/api/agent_controller/default',
       validate: false,
     },
     async (context, request, response) => {
       const params = {
-        index: "test-index",
+        index: "agent-index",
         body: {
           query: {
-            match_all : {},
+            match:{
+              "_id" : "default"
+            }
           },
         },
       }
       const res: SearchResponse<unknown> = await context.core.elasticsearch.legacy.client.callAsCurrentUser('search', params);
       return response.ok({
-        body: {
-          result: res.hits,
-        },
+        body: res.hits.hits[0]._source,
       });
     }
   );
