@@ -14,5 +14,5 @@ do
     docker-compose -f docker-compose.local.yml up --build -d kibana; 
     echo "Build finished - Number:$i"
     i=$((i+1))
-    sleep 10
+    # sleep 10
 done
