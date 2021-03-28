@@ -50,6 +50,8 @@ services:
     networks:
       main:
           ipv4_address: 10.0.2.13
+    ports:
+      - "5044:5044"
     restart: on-failure
     depends_on:
       - elasticsearch
