@@ -352,8 +352,10 @@ export const AgentControllerApp = ({
 
   const mainSideNav = () => {
     const [isSideNavOpenOnMobile, setIsSideNavOpenOnMobile] = useState(false);
-    const [selectedItemName, setSelectedItem] = useState("");
-    const [isLoading, setIsLoading] = useState(true);
+    const [selectedItemName, setSelectedItem] = useState("nav1");
+    const [isLoading, setIsLoading] = useState(false);
+    const [sideNav, setSideNav] = useState();
+    const [isConstructing, setIsConstructing] = useState(true);
     const history = useHistory();
     const toggleOpenOnMobile = () => {
       setIsSideNavOpenOnMobile(!isSideNavOpenOnMobile);
@@ -377,7 +379,7 @@ export const AgentControllerApp = ({
       };
     };
   
-    const sideNav = [
+    const sideNav1 = [
       createItem('Navigation', {
         icon: <EuiIcon type="menu" />,
         items: [
@@ -388,24 +390,54 @@ export const AgentControllerApp = ({
       }, "nav1"),
     ];
     
-    http.get('/api/agent_controller/sidenav_content').then((res) => {
-      for (let x in res){
-        console.log(res[x]["_source"]["name"]);
-        console.log(res[x]["_id"]);
-        let agent_name = res[x]["_source"]["name"];
-        let agent_id = res[x]["_id"];
-        sideNav[0].items.push(
-          createItem(
-            agent_name, {
-            items: [
-              createItem('TShark', {}, agent_id + "/tshark"),
-              createItem('Suricata', {}, agent_id +"/suricata"),
-            ],
-        }, agent_id));
-      }
-      
-    }).then(() => {setIsLoading(false);});
+    // async function updateNav2() {
+    //   setIsLoading(true);
+    //   let res = await http.get('/api/agent_controller/sidenav_content');
+    //   for (let x in res){
+    //     console.log(res[x]["_source"]["name"]);
+    //     console.log(res[x]["_id"]);
+    //     let agent_name = res[x]["_source"]["name"];
+    //     let agent_id = res[x]["_id"];
+    //     sideNav1[0].items.push(
+    //       createItem(
+    //         agent_name, {
+    //         items: [
+    //           createItem('TShark', {}, agent_id + "/tshark"),
+    //           createItem('Suricata', {}, agent_id +"/suricata"),
+    //         ],
+    //     }, agent_id));
+    //   }
+    //   setIsLoading(false);
+    // }
 
+    const updateNav = () => {
+      setIsLoading(true);
+      http.get('/api/agent_controller/sidenav_content').then((res) => {
+        for (let x in res){
+          console.log(res[x]["_source"]["name"]);
+          console.log(res[x]["_id"]);
+          let agent_name = res[x]["_source"]["name"];
+          let agent_id = res[x]["_id"];
+          sideNav1[0].items.push(
+            createItem(
+              agent_name, {
+              items: [
+                createItem('TShark', {}, agent_id + "/tshark"),
+                createItem('Suricata', {}, agent_id +"/suricata"),
+              ],
+          }, agent_id));
+        }
+      }).then(() => {setIsLoading(false);});
+      
+    }
+    
+    if(isConstructing) {
+      updateNav();
+      setIsConstructing(false);
+      setSideNav(sideNav1);
+    }
+    
+    //useEffect(() => {    // Update the document title using the browser API    document.title = `You clicked ${count} times`;  });
     // for (let i = 1; i < 10; i++) {
     //   let agent_num = "agentService"+ i.toString();
     //   sideNav[0].items.push(
