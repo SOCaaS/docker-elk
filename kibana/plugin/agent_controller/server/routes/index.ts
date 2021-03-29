@@ -16,6 +16,34 @@ export function defineRoutes(router: IRouter) {
       });
     }
   );
+  
+  router.get(
+    {
+      path: '/api/agent_controller/sidenav_content',
+      validate: false,
+    },
+    async (context, request, response) => {
+      const params = {
+        index: "agent-index",
+        body: {
+          query: {
+            bool:{
+              must_not:{
+                match:{
+                  "_id" : "default"
+                }
+              }
+            }
+          },
+        },
+      }
+      const res: SearchResponse<unknown> = await context.core.elasticsearch.legacy.client.callAsCurrentUser('search', params);
+      return response.ok({
+        body: res.hits.hits,
+      });
+    }
+  );
+  
   router.post(
     {
         path: '/api/agent_controller/post_example',
