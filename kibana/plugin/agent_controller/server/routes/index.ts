@@ -75,6 +75,27 @@ export function defineRoutes(router: IRouter) {
          });
     }
   );
+
+  router.post(
+    {
+      path: '/api/agent_controller/{id}',
+      validate: {
+        params: schema.object(
+          {
+            id: schema.string(),
+          }
+        ),
+      }
+    },
+    async (context, request, response) => {
+      return response.ok({
+        body: {
+          id: request.params.id
+        }
+      })
+    }
+  )
+
   router.get(
     {
       path: '/api/agent_controller/default',
