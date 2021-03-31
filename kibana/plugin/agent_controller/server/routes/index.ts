@@ -98,8 +98,14 @@ export function defineRoutes(router: IRouter) {
 
   router.get(
     {
-      path: '/api/agent_controller/default',
-      validate: false,
+      path: '/api/agent_controller/{id}',
+      validate: {
+        params: schema.object(
+          {
+            id: schema.string(),
+          }
+        ),
+      },
     },
     async (context, request, response) => {
       const params = {
@@ -107,7 +113,7 @@ export function defineRoutes(router: IRouter) {
         body: {
           query: {
             match:{
-              "_id" : "default"
+              "_id" : request.params.id
             }
           },
         },
