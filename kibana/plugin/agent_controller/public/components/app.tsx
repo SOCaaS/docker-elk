@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { i18n } from '@kbn/i18n';
 import { FormattedMessage, I18nProvider } from '@kbn/i18n/react';
 import { BrowserRouter as Router, Route, useHistory} from 'react-router-dom';
@@ -352,8 +352,8 @@ export const AgentControllerApp = ({
 
   const mainSideNav = () => {
     const [isSideNavOpenOnMobile, setIsSideNavOpenOnMobile] = useState(false);
-    const [selectedItemName, setSelectedItem] = useState("");
-    const [isLoading, setIsLoading] = useState(true);
+    const [selectedItemName, setSelectedItem] = useState("nav1");
+    const [sideNavData, setsideNavData] = useState([]);
     const history = useHistory();
     const toggleOpenOnMobile = () => {
       setIsSideNavOpenOnMobile(!isSideNavOpenOnMobile);
@@ -376,61 +376,47 @@ export const AgentControllerApp = ({
         onClick: () => selectItem(id)
       };
     };
-  
+    
+    
+    useEffect(() => {
+      http.get('/api/agent_controller/sidenav_content').then((res) => {
+        let newArr = [];
+        console.log(res);
+        for (let i = 0; i < res.length; i++) {
+          newArr.push(res[i]); 
+        }
+        setsideNavData(newArr); 
+      });
+    }, [])
+    
     const sideNav = [
       createItem('Navigation', {
         icon: <EuiIcon type="menu" />,
-        items: [
-            createItem('Default', {
-              items: [createItem('TShark', {}, "default/tshark"), createItem('Suricata', {},  "default/suricata")],
-            },"default"),
-          ],
-      }, "nav1"),
-    ];
+        items: [],}, "nav1"),
+    ]
     
-    http.get('/api/agent_controller/sidenav_content').then((res) => {
-      for (let x in res){
-        console.log(res[x]["_source"]["name"]);
-        console.log(res[x]["_id"]);
-        let agent_name = res[x]["_source"]["name"];
-        let agent_id = res[x]["_id"];
-        sideNav[0].items.push(
-          createItem(
-            agent_name, {
-            items: [
-              createItem('TShark', {}, agent_id + "/tshark"),
-              createItem('Suricata', {}, agent_id +"/suricata"),
-            ],
-        }, agent_id));
-      }
+    for (let x in sideNavData){
+      let agent_name = sideNavData[x]["_source"]["name"];
+      let agent_id = sideNavData[x]["_id"];
+      sideNav[0].items.push(
+        createItem(
+          agent_name, {
+          items: [
+            createItem('TShark', {}, agent_id + "/tshark"),
+            createItem('Suricata', {}, agent_id +"/suricata"),
+          ],
+      }, agent_id));
+    }
       
-    }).then(() => {setIsLoading(false);});
-
-    // for (let i = 1; i < 10; i++) {
-    //   let agent_num = "agentService"+ i.toString();
-    //   sideNav[0].items.push(
-    //     createItem(
-    //       'Agent '+i.toString(), {
-    //       items: [
-    //         createItem('TShark', {}, agent_num + "/tshark"),
-    //         createItem('Suricata', {}, agent_num +"/suricata"),
-    //       ],
-    //   }, agent_num));
-    // }
-  
     return(
       <>
-        {!isLoading && (
-          <>
-            <EuiSideNav
-              mobileTitle="Navigate within $APP_NAME"
-              toggleOpenOnMobile={toggleOpenOnMobile}
-              isOpenOnMobile={isSideNavOpenOnMobile}
-              items={sideNav}
-              style={{ width: 192 }}
-            />
-          </>
-        )}
+        <EuiSideNav
+          mobileTitle="Navigate within $APP_NAME"
+          toggleOpenOnMobile={toggleOpenOnMobile}
+          isOpenOnMobile={isSideNavOpenOnMobile}
+          items={sideNav}
+          style={{ width: 192 }}
+        />
       </>
     );
   };
