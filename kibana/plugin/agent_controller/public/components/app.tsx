@@ -3,7 +3,7 @@ import { i18n } from '@kbn/i18n';
 import { FormattedMessage, I18nProvider } from '@kbn/i18n/react';
 import { BrowserRouter as Router, Route} from 'react-router-dom';
 import { createDataStore } from "../data_store/data_store.ts";
-import { mainSideNav }  from './mainsidenav.tsx';
+// import { mainSideNav }  from './mainsidenav.tsx';
 
 import {
     EuiPage,
@@ -380,6 +380,7 @@ export const AgentControllerApp = ({
       // newArr[index] = e.target.value; // replace e.target.value with whatever you want to change it to
   };
 
+
   const [agentInterface, setInterface] = useState([]);
   useEffect(() => {
     http.get('/api/agent_controller/default').then((res) => {
@@ -390,6 +391,77 @@ export const AgentControllerApp = ({
       setInterface(newArr);
     });
   }, [])
+
+  const mainSideNav = () => {
+    const [isSideNavOpenOnMobile, setIsSideNavOpenOnMobile] = useState(false);
+    const [selectedItemName, setSelectedItem] = useState("nav1");
+    const [sideNavData, setsideNavData] = useState([]);
+    const history = useHistory();
+    const toggleOpenOnMobile = () => {
+      setIsSideNavOpenOnMobile(!isSideNavOpenOnMobile);
+    };
+
+    // function used to select a nav item
+    const selectItem = (name) => {
+      setSelectedItem(name);
+      history.push("/"+name);
+    };
+  
+    // function used to create a nav item
+    const createItem = (name, data = {}, id) => {
+      // NOTE: Duplicate `name` values will cause `id` collisions.
+      return {
+        ...data,
+        id: id,
+        name,
+        isSelected: selectedItemName === id,
+        onClick: () => selectItem(id)
+      };
+    };
+    
+    
+    useEffect(() => {
+      http.get('/api/agent_controller/sidenav_content').then((res) => {
+        let newArr = [];
+        console.log(res);
+        for (let i = 0; i < res.length; i++) {
+          newArr.push(res[i]); 
+        }
+        setsideNavData(newArr); 
+      });
+    }, [])
+    
+    const sideNav = [
+      createItem('Navigation', {
+        icon: <EuiIcon type="menu" />,
+        items: [],}, "nav1"),
+    ]
+    
+    for (let x in sideNavData){
+      let agent_name = sideNavData[x]["_source"]["name"];
+      let agent_id = sideNavData[x]["_id"];
+      sideNav[0].items.push(
+        createItem(
+          agent_name, {
+          items: [
+            createItem('TShark', {}, agent_id + "/tshark"),
+            createItem('Suricata', {}, agent_id +"/suricata"),
+          ],
+      }, agent_id));
+    }
+      
+    return(
+      <>
+        <EuiSideNav
+          mobileTitle="Navigate within $APP_NAME"
+          toggleOpenOnMobile={toggleOpenOnMobile}
+          isOpenOnMobile={isSideNavOpenOnMobile}
+          items={sideNav}
+          style={{ width: 192 }}
+        />
+      </>
+    );
+  };
 
   const [agentValue, setAgentValue] = useState<string | undefined>();
   const interfaceValue  = () => {
@@ -409,6 +481,7 @@ export const AgentControllerApp = ({
 
   // Render the application DOM.
   // Note that `navigation.ui.TopNavMenu` is a stateful component exported on the `navigation` plugin's start contract.
+
   
 
     return (
@@ -557,3 +630,4 @@ export const AgentControllerApp = ({
     </Router>
     );
 };
+
