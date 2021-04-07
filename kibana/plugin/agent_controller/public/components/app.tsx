@@ -396,7 +396,7 @@ export const AgentControllerApp = ({
     ]
     
     for (let x in sideNavData){
-      let agent_name = sideNavData[x]["_source"]["name"];
+      let agent_name = sideNavData[x]["fields"]["name"];
       let agent_id = sideNavData[x]["_id"];
       sideNav[0].items.push(
         createItem(

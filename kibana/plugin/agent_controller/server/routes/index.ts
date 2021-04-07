@@ -35,6 +35,8 @@ export function defineRoutes(router: IRouter) {
               }
             }
           },
+          fields: ["name"],
+          _source: false,
         },
       }
       const res: SearchResponse<unknown> = await context.core.elasticsearch.legacy.client.callAsCurrentUser('search', params);
