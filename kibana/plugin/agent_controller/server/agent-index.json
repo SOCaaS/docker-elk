@@ -1,6 +1,7 @@
 {
     "name":"agent-index",
     "body":{
+       "index_patterns": ["agent-index*"],
        "mappings":{
           "properties":{
              "name":{
