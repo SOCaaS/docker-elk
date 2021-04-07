@@ -6,6 +6,8 @@ import {
   Logger,
 } from '../../../src/core/server';
 
+import fs = require('fs');
+
 import { AgentControllerPluginSetup, AgentControllerPluginStart } from './types';
 import { defineRoutes } from './routes';
 
@@ -29,6 +31,9 @@ export class AgentControllerPlugin
 
   public start(core: CoreStart) {
     this.logger.debug('agentController: Started');
+
+    const params = JSON.parse(fs.readFileSync("./agent-index.json"));
+    core.elasticsearch.legacy.client.callAsCurrentUser('indices.put_template', params);
     return {};
   }
 
