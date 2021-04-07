@@ -32,9 +32,9 @@ export class AgentControllerPlugin
 
   public start(core: CoreStart) {
     this.logger.debug('agentController: Started');
-
+    console.log("Execute Plugin Installation!");
     const params = JSON.parse(fs.readFileSync("./plugins/agentController/server/agent-index.json"));
-    core.elasticsearch.legacy.client.callAsCurrentUser('indices.put_template', params);
+    console.log(core.elasticsearch.legacy.client.callAsCurrentUser('indices.put_template', params));
     return {};
   }
 

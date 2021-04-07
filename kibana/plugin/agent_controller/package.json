@@ -8,8 +8,6 @@
     "kbn": "node ../../scripts/kbn"
   },
   "dependencies": {
-    "fs": "0.0.1-security",
-    "path": "*",
-    "process" : "*"
+    "fs": "0.0.1-security"
   }
 }
