@@ -1,3 +1,9 @@
+echo "Update"
+apt update
+
+echo "Install Docker.io & Docker-Compose"
+apt install -y docker.io docker-compose
+
 echo "Install Tools"
 apt install -y inotify-tools
 docker-compose -f docker-compose.local.yml up --build -d kibana; 
@@ -5,7 +11,7 @@ docker-compose -f docker-compose.local.yml up --build -d kibana;
 trap ctrl_c INT
 
 function ctrl_c() {
-    docker-compose -f docker-compose.local.yml down
+    docker-compose -f docker-compose.local.yml down -v
 }
 
 clear

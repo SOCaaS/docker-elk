@@ -1,0 +1,39 @@
+{
+  "index" : "agent-index",
+  "id" : "default",
+  "method" : "post",
+  "body" : {
+    "name" : "default",
+    "active" : false,
+    "interface" : "eth0",
+    "interfaces" : ["eth0","eth1","eth2"],
+    "ip" : "127.0.0.1",
+    "services" : {
+      "tshark" : {
+        "active" : false,
+        "rules" : [
+          {
+            "id": 1,
+            "details": "tshark -i $interface",
+            "active" : false
+          }
+        ]
+      },
+      "suricata" : {
+        "active" : false,
+        "rules" : [
+          {
+            "id": 1,
+            "details": "suricata -i $interface",
+            "active" : false
+          },
+          {
+            "id": 2,
+            "details": "suricata -i $interface",
+            "active" : false
+          }
+        ]
+      }
+    }
+  }
+}

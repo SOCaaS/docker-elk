@@ -6,6 +6,10 @@ import {
   Logger,
 } from '../../../src/core/server';
 
+import { SearchResponse } from 'elasticsearch';
+
+import * as fs from 'fs';
+
 import { AgentControllerPluginSetup, AgentControllerPluginStart } from './types';
 import { defineRoutes } from './routes';
 
@@ -27,8 +31,22 @@ export class AgentControllerPlugin
     return {};
   }
 
+
   public start(core: CoreStart) {
-    this.logger.debug('agentController: Started');
+    async function templateTask() {
+      const params = JSON.parse(fs.readFileSync("./plugins/agentController/server/templates/agent-index.json"));
+      const result = await core.elasticsearch.client.asInternalUser.indices.putTemplate(params);
+    }
+
+    async function defaultDoc() {
+      const params = JSON.parse(fs.readFileSync("./plugins/agentController/server/templates/agent-default.json"));
+      const result = await core.elasticsearch.client.asInternalUser.create(params);
+    }
+    console.log("Add Plugin Template Installation!");
+    templateTask();
+    console.log("Add Plugin Default Document Installation!");
+    defaultDoc();
+    
     return {};
   }
 
