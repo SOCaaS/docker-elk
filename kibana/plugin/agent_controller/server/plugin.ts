@@ -46,6 +46,8 @@ export class AgentControllerPlugin
     templateTask();
     console.log("Add Plugin Default Document Installation!");
     defaultDoc();
+    
+    return {};
   }
 
   public stop() {}
