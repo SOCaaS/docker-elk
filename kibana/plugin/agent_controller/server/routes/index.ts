@@ -96,7 +96,7 @@ export function defineRoutes(router: IRouter) {
         }
       })
     }
-  )
+  );
 
   router.get(
     {
