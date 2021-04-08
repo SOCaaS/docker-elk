@@ -1,16 +1,16 @@
 ARG ELK_VERSION
 
-FROM node:14.16.0 as node
+FROM node:14.16.0-alpine3.13 as node
 
 ARG ELK_VERSION
 
-RUN apt update
-
-RUN apt install -y git
+RUN apk add git
 
 WORKDIR /usr/app/
 
 RUN git clone --single-branch --depth=1 --branch 7.11 https://github.com/elastic/kibana.git
+
+RUN apk add gcc make python3 libc-dev g++
 
 WORKDIR /usr/app/kibana
 
@@ -33,3 +33,5 @@ ADD config/kibana.yml /usr/share/kibana/config/kibana.yml
 
 # Add your kibana plugins setup here
 RUN kibana-plugin install file:///usr/share/kibana/agentController-${ELK_VERSION}.zip
+
+RUN rm /usr/share/kibana/agentController-${ELK_VERSION}.zip
