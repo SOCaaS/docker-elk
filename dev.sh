@@ -12,6 +12,7 @@ trap ctrl_c INT
 
 function ctrl_c() {
     docker-compose -f docker-compose.local.yml down -v
+    docker image prune -f;
 }
 
 clear
