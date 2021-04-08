@@ -1,3 +1,9 @@
+echo "Update"
+apt update
+
+echo "Install Docker.io & Docker-Compose"
+apt install -y docker.io docker-compose
+
 echo "Install Tools"
 apt install -y inotify-tools
 docker-compose -f docker-compose.local.yml up --build -d kibana; 
