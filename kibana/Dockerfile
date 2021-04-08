@@ -33,3 +33,5 @@ ADD config/kibana.yml /usr/share/kibana/config/kibana.yml
 
 # Add your kibana plugins setup here
 RUN kibana-plugin install file:///usr/share/kibana/agentController-${ELK_VERSION}.zip
+
+RUN rm /usr/share/kibana/agentController-${ELK_VERSION}.zip
