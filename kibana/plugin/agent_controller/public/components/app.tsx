@@ -352,7 +352,7 @@ export const AgentControllerApp = ({
 
   const mainSideNav = () => {
     const [isSideNavOpenOnMobile, setIsSideNavOpenOnMobile] = useState(false);
-    const [selectedItemName, setSelectedItem] = useState("nav1");
+    const [selectedItemName, setSelectedItem] = useState("default");
     const [sideNavData, setsideNavData] = useState([]);
     const history = useHistory();
     const toggleOpenOnMobile = () => {
@@ -392,7 +392,7 @@ export const AgentControllerApp = ({
     const sideNav = [
       createItem('Navigation', {
         icon: <EuiIcon type="menu" />,
-        items: [],}, "nav1"),
+        items: [],}, "default"),
     ]
     
     for (let x in sideNavData){

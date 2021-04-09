@@ -36,7 +36,7 @@ export const mainSideNav = () => {
               items: [createItem('TShark', {}, "default/tshark"), createItem('Suricata', {},  "default/suricata")],
             },"default"),
           ],
-      }, "nav1"),
+      }, "default"),
     ];
     
     // http.get('/api/agent_controller/test').then((res) => {
