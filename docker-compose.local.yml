@@ -15,8 +15,8 @@ services:
         source: ./elasticsearch/config/elasticsearch-local.yml
         target: /usr/share/elasticsearch/config/elasticsearch.yml
     ports:
-      - "9200:9200"
-      - "9300:9300"
+      - "127.0.0.1:9200:9200"
+      - "127.0.0.1:9300:9300"
     networks:
       - main
     environment:
@@ -35,10 +35,10 @@ services:
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     ports:
-      - "5044:5044"
-      - "5000:5000/tcp"
-      - "5000:5000/udp"
-      - "9600:9600"
+      - "127.0.0.1:5044:5044"
+      - "127.0.0.1:5000:5000/tcp"
+      - "127.0.0.1:5000:5000/udp"
+      - "127.0.0.1:9600:9600"
     networks:
       - main
     restart: on-failure
@@ -52,7 +52,7 @@ services:
       args:
         ELK_VERSION: $ELK_VERSION
     ports:
-      - "5601:5601"
+      - "127.0.0.1:5601:5601"
     volumes:
       - type: bind
         source: ./kibana/config/kibana-local.yml
