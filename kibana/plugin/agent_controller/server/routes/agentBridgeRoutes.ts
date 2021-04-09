@@ -7,20 +7,25 @@ export function agentBridgeRoutes(router: IRouter) {
     {
         path: '/api/agent_controller/posting_example',
         validate: {
-          body: schema.string()
+          body: schema.object(
+            {
+            id: schema.string(),
+            index: schema.string()
+            }
+          ),
         },
     },
-    async (context, request, response) => {
-        const req = JSON.parse(request.body)
+    async (context, req, response) => {
+        // const req = JSON.parse(request.body)
         const params = {
-          index: req.index,
-          id: req.id,
+          index: req.body.index,
+          id: req.body.id,
           body: {
             script : {
               source: "ctx._source.message = params.message",
               lang: "painless",
               params : {
-                message : "123"
+                message : "1"
               }
             }
           }

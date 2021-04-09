@@ -1,10 +1,9 @@
 export LOGS=$1
-trap exitFunction EXIT
 
-function exitFunction() {
-    clear
-    docker-compose -f docker-compose.local.yml logs -f $LOGS
-    $(exitFunction());
-}
+finish=0
+trap 'finish=1' SIGUSR1
 
-docker-compose -f docker-compose.local.yml logs -f $LOGS
+while [[ finish != 1 ]];
+do
+docker-compose -f docker-compose.local.yml logs -f $LOGS | sed -u 's/^[^|]*[^ ]* //'
+done
