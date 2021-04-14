@@ -24,9 +24,10 @@ i=$((i+1))
 
 while inotifywait -qqre modify "$(pwd)"; 
 do 
-    echo "Start Building - Number:$i"
+    echo "Start Building - Number:$i";
     docker-compose -f docker-compose.local.yml up --build -d kibana; 
-    echo "Build finished - Number:$i"
+    echo "Build finished - Number:$i";
+    git branch;
     i=$((i+1))
     # sleep 10
 done
