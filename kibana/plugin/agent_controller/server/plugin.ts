@@ -13,6 +13,7 @@ import * as fs from 'fs';
 import { AgentControllerPluginSetup, AgentControllerPluginStart } from './types';
 import { defineRoutes } from './routes';
 import { agentBridgeRoutes } from './routes/agentBridgeRoutes'
+import { agentPostRoutes } from './routes/agentPostRoutes'
 
 export class AgentControllerPlugin
   implements Plugin<AgentControllerPluginSetup, AgentControllerPluginStart> {
@@ -29,6 +30,7 @@ export class AgentControllerPlugin
     // Register server side APIs
     defineRoutes(router);
     agentBridgeRoutes(router);
+    agentPostRoutes(router);
 
     return {};
   }
