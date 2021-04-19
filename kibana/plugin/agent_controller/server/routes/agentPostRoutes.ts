@@ -14,7 +14,7 @@ export function agentPostRoutes(router: IRouter) {
             ),
             body: schema.object(
                 {
-                    id: schema.string(),
+                    id: schema.number(),
                     rule: schema.string(),
                     service: schema.string()
                 }
@@ -24,14 +24,14 @@ export function agentPostRoutes(router: IRouter) {
     async (context, request, response) => {
 
         const params = {
-          index: request.body.index,
-          id: request.body.id,
+          index: "agent-index",
+          id: request.params.id,
           body: {
             script : {
-              source: "ctx._source.message = params.message",
+              source: "ctx._source.services."+request.body.service+".rules["+(request.body.id-1).toString()+"].details = params.message",
               lang: "painless",
               params : {
-                message : request.body.message
+                message : request.body.rule
               }
             }
           }
@@ -101,8 +101,9 @@ export function agentPostRoutes(router: IRouter) {
             ),
             body: schema.object(
                 {
-                    id: schema.string(),
-                    service: schema.string()
+                    id: schema.number(),
+                    service: schema.string(),
+                    status: schema.boolean()
                 }
             ),
         },
@@ -110,14 +111,14 @@ export function agentPostRoutes(router: IRouter) {
     async (context, request, response) => {
 
         const params = {
-          index: request.body.index,
-          id: request.body.id,
+          index: "agent-index",
+          id: request.params.id,
           body: {
             script : {
-              source: "ctx._source.message = params.message",
+              source: "ctx._source.services."+request.body.service+".rules["+(request.body.id-1).toString()+"].active = params.message",
               lang: "painless",
               params : {
-                message : request.body.message
+                message : request.body.status
               }
             }
           }
