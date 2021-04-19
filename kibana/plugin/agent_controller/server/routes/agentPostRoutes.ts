@@ -22,7 +22,7 @@ export function agentPostRoutes(router: IRouter) {
         },
     },
     async (context, request, response) => {
-        // const req = JSON.parse(request.body)
+
         const params = {
           index: request.body.index,
           id: request.body.id,
@@ -32,6 +32,175 @@ export function agentPostRoutes(router: IRouter) {
               lang: "painless",
               params : {
                 message : request.body.message
+              }
+            }
+          }
+        }
+        await context.core.elasticsearch.legacy.client.callAsCurrentUser('update', params);
+        return response.ok({ 
+          body: {
+            message: "okay",
+            response: request.body
+          }
+         });
+    }
+  );
+
+
+  router.post(
+    {
+        path: '/api/agent_controller/{id}/add',
+        validate: {
+            params: schema.object(
+                {
+                    id: schema.string(),
+                }
+            ),
+            body: schema.object(
+                {
+                    rule: schema.string(),
+                    service: schema.string()
+                }
+            ),
+        },
+    },
+    async (context, request, response) => {
+
+        const params = {
+          index: request.body.index,
+          id: request.body.id,
+          body: {
+            script : {
+              source: "ctx._source.message = params.message",
+              lang: "painless",
+              params : {
+                message : request.body.message
+              }
+            }
+          }
+        }
+        await context.core.elasticsearch.legacy.client.callAsCurrentUser('update', params);
+        return response.ok({ 
+          body: {
+            message: "okay",
+            response: request.body
+          }
+         });
+    }
+  );
+
+
+  router.post(
+    {
+        path: '/api/agent_controller/{id}/activeRule',
+        validate: {
+            params: schema.object(
+                {
+                    id: schema.string(),
+                }
+            ),
+            body: schema.object(
+                {
+                    id: schema.string(),
+                    service: schema.string()
+                }
+            ),
+        },
+    },
+    async (context, request, response) => {
+
+        const params = {
+          index: request.body.index,
+          id: request.body.id,
+          body: {
+            script : {
+              source: "ctx._source.message = params.message",
+              lang: "painless",
+              params : {
+                message : request.body.message
+              }
+            }
+          }
+        }
+        await context.core.elasticsearch.legacy.client.callAsCurrentUser('update', params);
+        return response.ok({ 
+          body: {
+            message: "okay",
+            response: request.body
+          }
+         });
+    }
+  );
+
+
+  router.post(
+    {
+        path: '/api/agent_controller/{id}/status',
+        validate: {
+            params: schema.object(
+                {
+                    id: schema.string(),
+                }
+            ),
+            body: schema.object(
+                {
+                    status: schema.boolean()
+                }
+            ),
+        },
+    },
+    async (context, request, response) => {
+
+        const params = {
+          index: 'agent-index',
+          id: request.params.id,
+          body: {
+            script : {
+              source: "ctx._source.active = params.active",
+              lang: "painless",
+              params : {
+                active : request.body.status
+              }
+            }
+          }
+        }
+        await context.core.elasticsearch.legacy.client.callAsCurrentUser('update', params);
+        return response.ok({ 
+          body: {
+            message: "okay",
+            response: request.body
+          }
+         });
+    }
+  );
+
+  router.post(
+    {
+        path: '/api/agent_controller/{id}/interface',
+        validate: {
+            params: schema.object(
+                {
+                    id: schema.string(),
+                }
+            ),
+            body: schema.object(
+                {
+                    interface: schema.string(),
+                }
+            ),
+        },
+    },
+    async (context, request, response) => {
+
+        const params = {
+          index: "agent-index",
+          id: request.params.id,
+          body: {
+            script : {
+              source: "ctx._source.interface = params.interface",
+              lang: "painless",
+              params : {
+                interface : request.body.interface
               }
             }
           }
