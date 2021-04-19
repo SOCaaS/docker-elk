@@ -214,4 +214,31 @@ export function agentPostRoutes(router: IRouter) {
          });
     }
   );
+
+  router.post(
+    {
+        path: '/api/agent_controller/{id}/delete',
+        validate: {
+            params: schema.object(
+                {
+                    id: schema.string(),
+                }
+            )
+        },
+    },
+    async (context, request, response) => {
+
+        const params = {
+          index: "agent-index",
+          id: request.params.id
+        }
+        await context.core.elasticsearch.legacy.client.callAsCurrentUser('delete', params);
+        return response.ok({ 
+          body: {
+            message: "okay",
+            response: params
+          }
+         });
+    }
+  );
 }
