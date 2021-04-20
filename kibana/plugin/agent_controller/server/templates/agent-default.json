@@ -13,7 +13,6 @@
         "active" : false,
         "rules" : [
           {
-            "id": 1,
             "details": "tshark -i $interface",
             "active" : false
           }
@@ -23,12 +22,10 @@
         "active" : false,
         "rules" : [
           {
-            "id": 1,
             "details": "suricata -i $interface",
             "active" : false
           },
           {
-            "id": 2,
             "details": "suricata -i $interface",
             "active" : false
           }
