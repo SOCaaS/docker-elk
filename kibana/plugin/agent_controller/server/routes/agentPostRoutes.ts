@@ -247,4 +247,46 @@ export function agentPostRoutes(router: IRouter) {
          });
     }
   );
+
+  router.post(
+    {
+        path: '/api/agent_controller/{id}/deleteRule',
+        validate: {
+            params: schema.object(
+                {
+                    id: schema.string(),
+                }
+            ),
+            body: schema.object(
+              {
+                id: schema.number(),
+                service: schema.string()
+              }
+            )
+        },
+    },
+    async (context, request, response) => {
+
+        const params = {
+          index: "agent-index",
+          id: request.params.id,
+          body: {
+            script : {
+              source: "ctx._source.services."+request.body.service+".rules.remove(params.id)",
+              lang: "painless",
+              params : {
+                id : (request.body.id - 1)
+              }
+            }
+          }
+        }
+        await context.core.elasticsearch.legacy.client.callAsCurrentUser('update', params);
+        return response.ok({ 
+          body: {
+            message: "okay",
+            response: request.body
+          }
+         });
+    }
+  );
 }
