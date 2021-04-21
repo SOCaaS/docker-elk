@@ -67,14 +67,19 @@ export function agentPostRoutes(router: IRouter) {
     async (context, request, response) => {
 
         const params = {
-          index: request.body.index,
-          id: request.body.id,
+          index: 'agent-index',
+          id: request.params.id,
           body: {
             script : {
-              source: "ctx._source.message = params.message",
+              source: "ctx._source.services."+request.body.service+".rules.addAll(params.rules)",
               lang: "painless",
               params : {
-                message : request.body.message
+                rules : [
+                  {
+                    details : request.body.rule,
+                    active : false
+                  }
+                ]
               }
             }
           }
@@ -238,6 +243,48 @@ export function agentPostRoutes(router: IRouter) {
           body: {
             message: "okay",
             response: params
+          }
+         });
+    }
+  );
+
+  router.post(
+    {
+        path: '/api/agent_controller/{id}/deleteRule',
+        validate: {
+            params: schema.object(
+                {
+                    id: schema.string(),
+                }
+            ),
+            body: schema.object(
+              {
+                id: schema.number(),
+                service: schema.string()
+              }
+            )
+        },
+    },
+    async (context, request, response) => {
+
+        const params = {
+          index: "agent-index",
+          id: request.params.id,
+          body: {
+            script : {
+              source: "ctx._source.services."+request.body.service+".rules.remove(params.id)",
+              lang: "painless",
+              params : {
+                id : (request.body.id - 1)
+              }
+            }
+          }
+        }
+        await context.core.elasticsearch.legacy.client.callAsCurrentUser('update', params);
+        return response.ok({ 
+          body: {
+            message: "okay",
+            response: request.body
           }
          });
     }

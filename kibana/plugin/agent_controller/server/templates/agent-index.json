@@ -29,9 +29,6 @@
                          "rules":{
                             "type":"nested",
                             "properties":{
-                               "id":{
-                                  "type":"integer"
-                               },
                                "details":{
                                   "type":"text"
                                },
@@ -50,9 +47,6 @@
                          "rules":{
                             "type":"nested",
                             "properties":{
-                               "id":{
-                                  "type":"integer"
-                               },
                                "details":{
                                   "type":"text"
                                },
