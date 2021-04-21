@@ -1,31 +1,33 @@
 import { Comparators } from "../comparators/comparators";
 import { times } from "../utils/utils";
 
-const ruleSet = [
-  "Very long first name that will wrap or be truncated",
-  "Another very long first name which will wrap or be truncated",
-];
 
-const ruleName = [
-  "Very long first name that will wrap or be truncated",
-  "Another very long first name which will wrap or be truncated",
-  "Clinton",
-  "Igor",
-];
 
-const createRules = () => {
-  return times(10, (index) => {
+// const ruleSet = [
+//   "Very long first name that will wrap or be truncated",
+//   "Another very long first name which will wrap or be truncated",
+// ];
+
+// const ruleID = [
+//   "Very long first name that will wrap or be truncated",
+//   "Another very long first name which will wrap or be truncated",
+//   "Clinton",
+//   "Igor",
+// ];
+
+const createRules = (ruleID, ruleName, ruleLength) => {
+  return times(ruleLength, (index) => {
     return {
       id: index,
-      ruleName: index < 10 ? ruleName[index] : ruleName[index - 10],
-      ruleSet: index < 10 ? ruleSet[index] : ruleSet[index - 10],
+      ruleID: index < ruleLength ? ruleID[index] : ruleID[index - ruleLength],
+      ruleName: index < ruleLength ? ruleName[index] : ruleName[index - ruleLength],
       status: 1
     };
   });
 };
 
-export const createDataStore = () => {
-  const rules = createRules();
+export const createDataStore = (ruleID, ruleName, ruleLength) => {
+  const rules = createRules(ruleID, ruleName, ruleLength );
 
   return {
     rules,
