@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import { i18n } from '@kbn/i18n';
 import { FormattedMessage, I18nProvider } from '@kbn/i18n/react';
-import { BrowserRouter as Router, Route, useHistory} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, useHistory} from 'react-router-dom';
 import { createDataStore } from "../data_store/data_store.ts";
 // import { mainSideNav }  from './mainsidenav.tsx';
 
@@ -72,8 +72,9 @@ class myModal {
   saveModal() {
     this.setIsModalVisible(false);
   }
-  showModal() {
+  showModal(rule) {
     this.setIsModalVisible(true);
+    this.setValueRule(rule);
   }
   checkModalvisible() {
     if (this.isModalVisible) {
@@ -131,18 +132,18 @@ class createSwitch {
   };
 }
 
-const ContentBody = ({match}) => {
-  const {
-    params: {agentService_id,agent_id}
-  } = match;
+// const ContentBody = ({match}) => {
+//   const {
+//     params: {agentService_id,agent_id}
+//   } = match;
   
-  return(
-    <>
-      <h1> {agentService_id} </h1>
-      <h2> {agent_id} </h2>
-    </>
-  );
-};
+//   return(
+//     <>
+//       <h1> {agentService_id} </h1>
+//       <h2> {agent_id} </h2>
+//     </>
+//   );
+// };
 
 export const AgentControllerApp = ({
   basename,
@@ -150,11 +151,12 @@ export const AgentControllerApp = ({
   http,
   navigation,
 }: AgentControllerAppDeps) => {
+  const default_url  = "/api/agent_controller/default";
 
+  const [current_url, setURL] = useState(default_url);
   //add and edit button
   const [valueRuleAdd, setValueRuleAdd] = useState("");
   const [valueRuleEdit, setValueRuleEdit] = useState("");
-
   const [isModalVisibleAdd, setIsModalVisibleAdd] = useState(false);
   const [isModalVisibleEdit, setIsModalVisibleEdit] = useState(false);
 
@@ -176,18 +178,44 @@ export const AgentControllerApp = ({
   let modalEdit = createModalEdit.checkModalvisible();
 
   //EuiBasicTable
-  const store = createDataStore();
+  const [ruleID, setRuleID] = useState([]);
+  const [ruleName, setruleName] = useState([]);
+  const [ruleLength, setRuleLength] = useState<number | undefined>();
+  const [currentService, setService] = useState<string | undefined>();
+  const [agentStatus, setAgentStatus] = useState([]);
+
+  useEffect(() => {
+    http.get(current_url).then((res) => {
+      let ruleArr = [];
+      let detailArr = [];
+      let rules = [];
+      let ruleStatus = [];
+      if(currentService == "tshark" ||  currentService == "suricata"){  
+        rules = res["services"][currentService]["rules"];
+        for (let i = 0; i < rules.length; i++) {
+          ruleArr[i] = i + 1;
+          detailArr.push(rules[i]["details"]); 
+          ruleStatus.push(rules[i]["active"]); 
+        }
+      }
+      setRuleID(ruleArr);
+      setruleName(detailArr);
+      setRuleLength(rules.length);
+      setAgentStatus(ruleStatus);
+    });
+  }, [currentService])
+
+  const store = createDataStore(ruleID, ruleName, ruleLength);
 
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(5);
-  const [sortField, setSortField] = useState("ruleName");
+  const [sortField, setSortField] = useState("ruleID");
   const [sortDirection, setSortDirection] = useState("asc");
   const [selectedItems, setSelectedItems] = useState([]);
   const [itemIdToExpandedRowMap, setItemIdToExpandedRowMap] = useState({});
 
   const onTableChange = ({ page = {}, sort = {} }) => {
     const { index: pageIndex, size: pageSize } = page;
-
     const { field: sortField, direction: sortDirection } = sort;
 
     setPageIndex(pageIndex);
@@ -223,7 +251,7 @@ export const AgentControllerApp = ({
     } else {
       const listItems = [
         {
-          description: `${item.ruleSet}`
+          description: `${item.ruleName}`
         }
       ];
       itemIdToExpandedRowMapValues[item.id] = (
@@ -244,6 +272,19 @@ export const AgentControllerApp = ({
 
   const columns = [
     {
+      field: "ruleID",
+      name: "ID",
+      sortable: true,
+      truncateText: true,
+      mobileOptions: {
+        render: (item) => <span>{item.ruleID}</span>,
+        header: false,
+        truncateText: false,
+        enlarge: true,
+        fullWidth: true
+      }
+    },
+    {
       field: "ruleName",
       name: "Rule",
       sortable: true,
@@ -256,7 +297,6 @@ export const AgentControllerApp = ({
         fullWidth: true
       }
     },
-
     {
       name: "Actions",
       actions: [
@@ -265,8 +305,9 @@ export const AgentControllerApp = ({
           description: "Edit Rule",
           type: "icon",
           icon: "pencil",
-          onClick: () => {
-            createModalEdit.showModal();
+          onClick: (e) => {
+            console.log(e.ruleName);
+            createModalEdit.showModal(e.ruleName);
           }
         }
       ]
@@ -323,6 +364,23 @@ export const AgentControllerApp = ({
 
   const [position, setPosition] = useState("fixed");
 
+  //get response from HTTP
+  const [agentName, setName] = useState<string | undefined>();
+  const [agentActive, setActive] = useState<boolean | undefined>();
+  const [agentIP, setIP] = useState<string | undefined>();
+  const [agentValue, setAgentValue] = useState<string | undefined>();
+
+  //set and get from backend
+  http.get(current_url).then((res) => {
+    var name = res["name"];
+    var nameCapitalized = name.charAt(0).toUpperCase() + name.slice(1);
+    setName(nameCapitalized);
+    setActive(res["active"]);
+    setIP(res["ip"]);
+    setAgentValue(res["interface"]);  
+
+  });
+
   const sections = [
     {
       items: [<EuiHeaderLogo>Agent Controller</EuiHeaderLogo>],
@@ -330,38 +388,82 @@ export const AgentControllerApp = ({
     }
   ];
   //swtich Active
-  const [checkedActive, setCheckedActive] = useState(false);
-  let createSwitchActive = new createSwitch(checkedActive, setCheckedActive);
+  let createSwitchActive = new createSwitch(agentActive, setActive);
 
   //switch Rule
-  const [checkedRule, setCheckedRule] = useState(false);
-  let createSwitchRule = new createSwitch(checkedRule, setCheckedRule);
+  const controlCenter = () => {
+    const [agentStatus1, setAgentStatus1] = useState(agentStatus[0])
+    let createSwitchRule = new createSwitch(agentStatus1, setAgentStatus1);
+    let centerArr = [];
+    let size  = 0;
+    if(ruleID.length >= 3){
+      size = 3;
+    }
+    else{
+      size = ruleID.length;
+    }
+    for (let x = 0; x < size; x++){
+      let modal = ( 
+          <EuiSwitch
+          label={ruleID[x]+": "+ruleName[x]}
+          checked={createSwitchRule.checked}
+          onChange={(e) => createSwitchRule.onChange(e)}
+          />
+      );
+      centerArr.push(modal);
+      centerArr.push(<EuiSpacer/>);
+    }
+  return centerArr;
+  }
 
-  //interface options
-  const options = [
-    { value: "option_one", text: "Option one" },
-    { value: "option_two", text: "Option two" },
-    { value: "option_three", text: "Option three" }
-  ];
-
-  const [value, setValue] = useState(options[1].value);
 
   const onChangeFilter = (e) => {
-    setValue(e.target.value);
+    // setValue(e.target.value);
+    console.log(e.target.value)
   };
 
+
+  //get interface values, store in array
+  const [agentInterface, setInterface] = useState([]);
+  useEffect(() => {
+    http.get(current_url).then((res) => {
+      let newArr = [];
+      for (let i = 0; i < res["interfaces"].length; i++) {
+        newArr.push({ value: res["interfaces"][i], text: res["interfaces"][i] }); 
+      }
+      setInterface(newArr);
+    });
+  }, [current_url])
+  
+  //get sidenavdata values, store in array
+  const [sideNavData, setsideNavData] = useState([]);
+  useEffect(() => {
+    http.get('/api/agent_controller/sidenav_content').then((res) => {
+      let newArr = [];
+      for (let i = 0; i < res.length; i++) {
+        newArr.push(res[i]); 
+      }
+      setsideNavData(newArr); 
+    });
+  }, [])
+  
+  
   const mainSideNav = () => {
+    
     const [isSideNavOpenOnMobile, setIsSideNavOpenOnMobile] = useState(false);
     const [selectedItemName, setSelectedItem] = useState("default");
-    const [sideNavData, setsideNavData] = useState([]);
     const history = useHistory();
+    setService(history.location.pathname.replace(/.*\//, ""));
+    let delete_first_slash = history.location.pathname.replace(/\//, "")
+    setURL("/api/agent_controller/"+delete_first_slash.replace(/(\/\/[^\/]+)?\/.*/, '$1'));
+  
     const toggleOpenOnMobile = () => {
       setIsSideNavOpenOnMobile(!isSideNavOpenOnMobile);
     };
 
     // function used to select a nav item
     const selectItem = (name) => {
-      setSelectedItem(name);
+      setSelectedItem(name);     
       history.push("/"+name);
     };
   
@@ -376,19 +478,7 @@ export const AgentControllerApp = ({
         onClick: () => selectItem(id)
       };
     };
-    
-    
-    useEffect(() => {
-      http.get('/api/agent_controller/sidenav_content').then((res) => {
-        let newArr = [];
-        console.log(res);
-        for (let i = 0; i < res.length; i++) {
-          newArr.push(res[i]); 
-        }
-        setsideNavData(newArr); 
-      });
-    }, [])
-    
+       
     const sideNav = [
       createItem('Navigation', {
         icon: <EuiIcon type="menu" />,
@@ -407,7 +497,8 @@ export const AgentControllerApp = ({
           ],
       }, agent_id));
     }
-      
+    
+    
     return(
       <>
         <EuiSideNav
@@ -420,12 +511,12 @@ export const AgentControllerApp = ({
       </>
     );
   };
-
+ 
 
   // Render the application DOM.
   // Note that `navigation.ui.TopNavMenu` is a stateful component exported on the `navigation` plugin's start contract.
   return (
-    <Router basename={basename}>
+    <Router basename={basename} >
      <I18nProvider>
        <>
          <EuiPage>
@@ -437,10 +528,18 @@ export const AgentControllerApp = ({
                      <FormattedMessage
                        id="agentController.title"
                        defaultMessage="{name}"
-                       values={{ name: PLUGIN_NAME }}
-                     />
+                       values={{ name: agentName ? agentName : 'Unknown' }}
+                       />
                    </h1>
                  </EuiTitle>
+                 <Switch>  
+                   <Route path="/default"/>
+                    <Route path="/" >
+                      <EuiButton color="danger" iconType="trash" >
+                        Delete
+                      </EuiButton>
+                    </Route>     
+                  </Switch>
                </EuiPageHeader>
              {/* <EuiPanel paddingSize="none" color="transparent"> */}
              <EuiFlexGroup gutterSize="none" >
@@ -454,8 +553,8 @@ export const AgentControllerApp = ({
                          onChange={(e) => createSwitchActive.onChange(e)}
                        />
                      </EuiFlexItem>
-                     <EuiFlexItem>
-                       <EuiText>IP: 192.168.12.0</EuiText>
+                     <EuiFlexItem> 
+                     <EuiText> IP: {agentIP}</EuiText>
                      </EuiFlexItem>
                    </EuiFlexGroup>
                  </EuiPanel>
@@ -482,13 +581,13 @@ export const AgentControllerApp = ({
                            <EuiText>Interface</EuiText>
                          </EuiFlexItem>
                          <EuiFlexItem>
-                           <EuiSelect
-                             id="selectDocExample"
-                             options={options}
-                             value={value}
-                             onChange={(e) => onChangeFilter(e)}
-                             aria-label="Use aria labels when no actual label is in use"
-                           />
+                          <EuiSelect
+                                id="selectDocExample"
+                                options={agentInterface}
+                                value={agentValue}
+                                onChange={(e) => onChangeFilter(e)}
+                                aria-label="Use aria labels when no actual label is in use"
+                              />
                          </EuiFlexItem>
                          </EuiFlexGroup>
                        </EuiPanel>
@@ -496,7 +595,8 @@ export const AgentControllerApp = ({
                    </EuiFlexGroup>
              {/* </EuiPanel> */}
              <EuiSpacer/>
-               <EuiFlexGroup gutterSize="none">
+             <Route path={["/*/tshark", "/*/suricata"]}>
+               <EuiFlexGroup gutterSize="none"> 
                  <EuiFlexItem>
                    <EuiTitle>
                      <h2>Rules</h2>
@@ -548,16 +648,13 @@ export const AgentControllerApp = ({
                    <EuiPanel paddingSize="l">
                      <EuiFlexGroup gutterSize="none">
                        <EuiFlexItem>
-                         <EuiSwitch
-                           label="Rule DoS"
-                           checked={createSwitchRule.checked}
-                           onChange={(e) => createSwitchRule.onChange(e)}
-                         />
+                         {controlCenter()}
                        </EuiFlexItem>
                      </EuiFlexGroup>
                    </EuiPanel>
                  </EuiFlexItem>
                </EuiFlexGroup>
+               </Route>
            </EuiPageBody>
          </EuiPage>
        </>
