@@ -3,7 +3,7 @@
   "id" : "default",
   "method" : "post",
   "body" : {
-    "name" : "default",
+    "name" : "Default",
     "active" : false,
     "interface" : "eth0",
     "interfaces" : ["eth0","eth1","eth2"],

@@ -26,15 +26,6 @@ export function defineRoutes(router: IRouter) {
       const params = {
         index: "agent-index",
         body: {
-          query: {
-            bool:{
-              must_not:{
-                match:{
-                  "_id" : "default"
-                }
-              }
-            }
-          },
           fields: ["name"],
           _source: false,
         },
