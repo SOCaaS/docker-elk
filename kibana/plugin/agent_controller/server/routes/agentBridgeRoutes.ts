@@ -1,6 +1,7 @@
 import { IRouter, ILegacyScopedClusterClient } from '../../../../src/core/server';
 import { SearchResponse } from 'elasticsearch';
 import { schema } from '@kbn/config-schema';
+import { v4 as uuidv4 } from 'uuid';
 
 export function agentBridgeRoutes(router: IRouter) {
 
@@ -37,18 +38,16 @@ export function agentBridgeRoutes(router: IRouter) {
 
       const cParams = {
         index: "agent-index",
+        id: uuidv4(),
         method: "post",
         body: value
       }
 
-      console.log(cParams);
-
-      // console.log(await context.core.elasticsearch.asInternalUser.create(cParams));
-
+      const result = await context.core.elasticsearch.legacy.client.callAsCurrentUser('create', cParams);
 
       return response.ok({
         body: {
-          status: "create"
+          _id: result._id
         }
       })
     }
