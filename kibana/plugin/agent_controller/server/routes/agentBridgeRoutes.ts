@@ -6,6 +6,56 @@ export function agentBridgeRoutes(router: IRouter) {
 
   router.post(
     {
+      path: '/api/agent_controller/create',
+      validate: {
+        body: schema.object(
+          {
+              interfaces: schema.arrayOf(schema.string()),
+              ip: schema.string(),
+              name: schema.string()
+          }
+        ),
+      }
+    },
+    async (context, request, response) => {
+      const params = {
+        index: "agent-index",
+        body: {
+          query: {
+            match : {
+              _id : "default"
+            }
+          }
+        },
+      }
+      const res: SearchResponse<unknown> = await context.core.elasticsearch.legacy.client.callAsCurrentUser('search', params);
+      const value = res.hits.hits[0]._source;
+
+      value["interfaces"] = request.body.interfaces
+      value["ip"] = request.body.ip
+      value["name"] = request.body.name
+
+      const cParams = {
+        index: "agent-index",
+        method: "post",
+        body: value
+      }
+
+      console.log(cParams);
+
+      // console.log(await context.core.elasticsearch.asInternalUser.create(cParams));
+
+
+      return response.ok({
+        body: {
+          status: "create"
+        }
+      })
+    }
+  )
+
+  router.post(
+    {
       path: '/api/agent_controller/{id}',
       validate: {
         params: schema.object(

@@ -27,7 +27,7 @@ export function defineRoutes(router: IRouter) {
         index: "agent-index",
         body: {
           fields: ["name"],
-          _source: false,
+          _source: false
         },
       }
       const res: SearchResponse<unknown> = await context.core.elasticsearch.legacy.client.callAsCurrentUser('search', params);
