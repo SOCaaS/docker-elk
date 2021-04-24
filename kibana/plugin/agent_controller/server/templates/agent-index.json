@@ -16,8 +16,20 @@
              "interfaces":{
                 "type":"keyword"
              },
+             "time":{
+               "type":"keyword"
+            },
+            "times":{
+               "type":"keyword"
+            },
              "ip":{
                 "type":"ip"
+             },
+             "cpu" : {
+                "type" : "number"
+             },
+             "memory" : {
+               "type" : "number"
              },
              "services":{
                 "properties":{
