@@ -15,7 +15,28 @@ function ctrl_c() {
     docker image prune -f;
 }
 
-clear
+function check_log() {
+    ( docker-compose -f docker-compose.local.yml logs -f kibana & ) | grep -q "http server running at http://0.0.0.0:5601"
+    echo "Server is ready to be tested!"
+}
+
+echo "Wait for kibana to turn on!"
+check_log
+echo "Creating 5 Agent Service!"
+for a in {1..5}
+do
+    curl --location --request POST 'http://localhost:5601/api/agent_controller/create' \
+    --header 'kbn-xsrf: reporting' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+        "interfaces" : ["eth0","eht1","eth2"],
+        "name" : "Agent Service '$a'",
+        "ip" : "127.0.0.1"
+    }'
+    echo "\n"
+done
+
+# clear
 
 echo "Build on update"
 
@@ -29,5 +50,5 @@ do
     echo "Build finished - Number:$i";
     git branch;
     i=$((i+1))
-    # sleep 10
+    check_log &
 done
