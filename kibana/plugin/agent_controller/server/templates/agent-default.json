@@ -7,7 +7,11 @@
     "active" : false,
     "interface" : "eth0",
     "interfaces" : ["eth0","eth1","eth2"],
+    "time" : "5m",
+    "times" : ["1m", "2m" , "5m", "10m", "30m"],
     "ip" : "127.0.0.1",
+    "cpu" : 0,
+    "memory" : 0,
     "services" : {
       "tshark" : {
         "active" : false,
