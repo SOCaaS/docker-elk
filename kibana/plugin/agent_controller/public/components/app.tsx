@@ -369,6 +369,7 @@ export const AgentControllerApp = ({
   const [agentActive, setActive] = useState<boolean | undefined>();
   const [agentIP, setIP] = useState<string | undefined>();
   const [agentValue, setAgentValue] = useState<string | undefined>();
+  const [agentFrequency, setFrequency] = useState<string | undefined>();
 
   //set and get from backend
   http.get(current_url).then((res) => {
@@ -378,6 +379,7 @@ export const AgentControllerApp = ({
     setActive(res["active"]);
     setIP(res["ip"]);
     setAgentValue(res["interface"]);  
+    setFrequency(res["time"]);
 
   });
 
@@ -432,6 +434,18 @@ export const AgentControllerApp = ({
         newArr.push({ value: res["interfaces"][i], text: res["interfaces"][i] }); 
       }
       setInterface(newArr);
+    });
+  }, [current_url])
+
+  //get check frequency values, store in array
+  const [agentFrequencies, setFrequencies] = useState([]);
+  useEffect(() => {
+    http.get(current_url).then((res) => {
+      let newArr = [];
+      for (let i = 0; i < res["times"].length; i++) {
+        newArr.push({ value: res["times"][i], text: res["times"][i] }); 
+      }
+      setFrequencies(newArr);
     });
   }, [current_url])
   
@@ -586,6 +600,24 @@ export const AgentControllerApp = ({
                                 id="selectDocExample"
                                 options={agentInterface}
                                 value={agentValue}
+                                onChange={(e) => onChangeFilter(e)}
+                                aria-label="Use aria labels when no actual label is in use"
+                              />
+                         </EuiFlexItem>
+                         </EuiFlexGroup>
+                       </EuiPanel>
+                     </EuiFlexItem>
+                     <EuiFlexItem>
+                     <EuiPanel>
+                     <EuiFlexGroup gutterSize="none">
+                         <EuiFlexItem>
+                           <EuiText>Check Frequency</EuiText>
+                         </EuiFlexItem>
+                         <EuiFlexItem>
+                          <EuiSelect
+                                id="selectDocExample"
+                                options={agentFrequencies}
+                                value={agentFrequency}
                                 onChange={(e) => onChangeFilter(e)}
                                 aria-label="Use aria labels when no actual label is in use"
                               />
