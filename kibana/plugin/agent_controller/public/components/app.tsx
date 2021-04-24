@@ -370,6 +370,8 @@ export const AgentControllerApp = ({
   const [agentIP, setIP] = useState<string | undefined>();
   const [agentValue, setAgentValue] = useState<string | undefined>();
   const [agentFrequency, setFrequency] = useState<string | undefined>();
+  const [agentCPU, setCPU] = useState<string | undefined>();
+  const [agentMemory, setMemory] = useState<string | undefined>();
 
   //set and get from backend
   http.get(current_url).then((res) => {
@@ -380,7 +382,8 @@ export const AgentControllerApp = ({
     setIP(res["ip"]);
     setAgentValue(res["interface"]);  
     setFrequency(res["time"]);
-
+    setCPU(res["cpu"]);
+    setMemory(res["memory"]);
   });
 
   const sections = [
@@ -579,10 +582,10 @@ export const AgentControllerApp = ({
                  <EuiText>Status</EuiText>
                    <EuiFlexGroup gutterSize="none" >
                      <EuiFlexItem>
-                       <EuiText>CPU:</EuiText>
+                       <EuiText>CPU: {agentCPU}</EuiText>
                      </EuiFlexItem>
                      <EuiFlexItem>
-                       <EuiText>Memory:</EuiText>
+                       <EuiText>Memory: {agentMemory}</EuiText>
                      </EuiFlexItem>
                    </EuiFlexGroup>
                  </EuiPanel>
