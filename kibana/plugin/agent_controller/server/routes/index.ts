@@ -26,17 +26,8 @@ export function defineRoutes(router: IRouter) {
       const params = {
         index: "agent-index",
         body: {
-          query: {
-            bool:{
-              must_not:{
-                match:{
-                  "_id" : "default"
-                }
-              }
-            }
-          },
           fields: ["name"],
-          _source: false,
+          _source: false
         },
       }
       const res: SearchResponse<unknown> = await context.core.elasticsearch.legacy.client.callAsCurrentUser('search', params);

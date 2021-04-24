@@ -8,6 +8,7 @@
     "kbn": "node ../../scripts/kbn"
   },
   "dependencies": {
-    "fs": "0.0.1-security"
+    "fs": "0.0.1-security",
+    "uuid" : "*"
   }
 }
