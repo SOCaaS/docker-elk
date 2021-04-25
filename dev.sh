@@ -1,12 +1,12 @@
 echo -e ⚙ "Initial Setup" ⚙
 echo -e "\n📚 Updating Repository"
-apt update
+sudo apt update
 
 echo -e "\n🐳 Install Docker.io & Docker-Compose"
-apt install -y docker.io docker-compose
+sudo apt install -y docker.io docker-compose
 
 echo -e "\n⚙ Install Tools"
-apt install -y inotify-tools
+sudo apt install -y inotify-tools
 
 echo -e "\n"🏃‍♂️🏃‍♀️🏃‍♂️" \033[32mStart Building\t-\tNumber:0\033[0m" ⛏⚒🛠;
 docker-compose -f docker-compose.local.yml build --parallel kibana elasticsearch
