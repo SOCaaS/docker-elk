@@ -3,9 +3,9 @@ echo -e "\n📚 Updating Repository"
 sudo apt update
 
 echo -e "\n🐳 Install Docker.io & Docker-Compose"
-if [ ! command -v docker &> /dev/null ]; then
-    sudo apt install -y docker.io
-fi
+command -v docker >/dev/null 2>&1 || { 
+    sudo apt install -y docker.io; 
+}
 
 if [ ! -f /usr/bin/docker-compose ]; then
     sudo curl -L "https://github.com/docker/compose/releases/download/$(curl --silent https://api.github.com/repos/docker/compose/releases/latest | grep -Po '"tag_name": "\K.*\d')/docker-compose-$(uname -s)-$(uname -m)" -o /usr/bin/docker-compose
