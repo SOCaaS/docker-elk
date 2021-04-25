@@ -9,6 +9,7 @@ echo -e "\n⚙ Install Tools"
 apt install -y inotify-tools
 
 echo -e "\n"🏃‍♂️🏃‍♀️🏃‍♂️" \033[32mStart Building\t-\tNumber:0\033[0m" ⛏⚒🛠;
+docker-compose -f docker-compose.local.yml build --parallel kibana elasticsearch
 docker-compose -f docker-compose.local.yml up --build -d kibana;
 echo -e 🍻🍺🎉 "\033[32mBuild finished\t-\tNumber:0\033[0m" 🍻🍺🎉; 
 
