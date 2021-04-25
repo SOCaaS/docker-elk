@@ -424,7 +424,7 @@ export const AgentControllerApp = ({
     return(
       <>
         <EuiSideNav
-          mobileTitle="Navigate within $APP_NAME"
+          mobileTitle="Navigate"
           toggleOpenOnMobile={toggleOpenOnMobile}
           isOpenOnMobile={isSideNavOpenOnMobile}
           items={sideNav}
