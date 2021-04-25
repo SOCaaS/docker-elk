@@ -3,7 +3,14 @@ echo -e "\n📚 Updating Repository"
 sudo apt update
 
 echo -e "\n🐳 Install Docker.io & Docker-Compose"
-sudo apt install -y docker.io docker-compose
+if [ ! command -v docker &> /dev/null ]; then
+    sudo apt install -y docker.io
+fi
+
+if [ ! -f /usr/bin/docker-compose ]; then
+    sudo curl -L "https://github.com/docker/compose/releases/download/$(curl --silent https://api.github.com/repos/docker/compose/releases/latest | grep -Po '"tag_name": "\K.*\d')/docker-compose-$(uname -s)-$(uname -m)" -o /usr/bin/docker-compose
+    sudo chmod +x /usr/bin/docker-compose
+fi
 
 echo -e "\n⚙ Install Tools"
 sudo apt install -y inotify-tools
