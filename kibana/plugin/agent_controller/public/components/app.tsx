@@ -11,7 +11,6 @@ import { myModal } from "./myModal.tsx"
 import {
     EuiPage,
     EuiPageBody,
-    EuiPageContent,
     EuiPageHeader,
     EuiTitle,
     EuiText,
@@ -29,13 +28,6 @@ import {
     EuiButton,
     EuiDescriptionList,
     EuiHeaderLogo,
-    EuiTextArea,
-    EuiModal,
-    EuiModalBody,
-    EuiModalFooter,
-    EuiModalHeader,
-    EuiModalHeaderTitle
-
 } from '@elastic/eui';
 
 import { CoreStart } from '../../../../src/core/public';
