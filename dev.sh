@@ -15,7 +15,7 @@ echo -e 🍻🍺🎉 "\033[32mBuild finished\t-\tNumber:0\033[0m" 🍻🍺🎉;
 trap ctrl_c INT
 
 function ctrl_c() {
-    echo -e ⌚🛑 "\n\033[5;91mWait for docker-elk to turn off!\033[0m" 🛑⌛
+    echo -e "\n"⌚🛑 "\033[5;91mWait for docker-elk to turn off!\033[0m" 🛑⌛
     docker-compose -f docker-compose.local.yml down -v
     docker image prune -f;
     echo -e "🙏 \033[34mThank you for using dev.sh tool 🙏\033[0m"
