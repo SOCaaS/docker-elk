@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { i18n } from '@kbn/i18n';
 import { FormattedMessage, I18nProvider } from '@kbn/i18n/react';
 import { BrowserRouter as Router, Route, Switch, useHistory} from 'react-router-dom';
+
 import { createDataStore } from "../data_store/data_store.ts";
+import { createSwitch } from "./createSwitch.tsx"
+import { myModal } from "./myModal.tsx"
 // import { mainSideNav }  from './mainsidenav.tsx';
 
 import {
     EuiPage,
     EuiPageBody,
-    EuiPageContent,
     EuiPageHeader,
     EuiTitle,
     EuiText,
@@ -26,13 +28,6 @@ import {
     EuiButton,
     EuiDescriptionList,
     EuiHeaderLogo,
-    EuiTextArea,
-    EuiModal,
-    EuiModalBody,
-    EuiModalFooter,
-    EuiModalHeader,
-    EuiModalHeaderTitle
-
 } from '@elastic/eui';
 
 import { CoreStart } from '../../../../src/core/public';
@@ -45,91 +40,6 @@ interface AgentControllerAppDeps {
   notifications: CoreStart['notifications'];
   http: CoreStart['http'];
   navigation: NavigationPublicPluginStart;
-}
-
-class myModal {
-  constructor(
-    isModalVisible,
-    setIsModalVisible,
-    valueRule,
-    setValueRule,
-    text
-  ) {
-    this.isModalVisible = isModalVisible;
-    this.setIsModalVisible = setIsModalVisible;
-    this.valueRule = valueRule;
-    this.setValueRule = setValueRule;
-    let modal;
-    this.modal = modal;
-    this.text = text;
-  }
-  onChangeText = (e) => {
-    this.setValueRule(e.target.valueRule);
-  };
-  closeModal() {
-    this.setIsModalVisible(false);
-  }
-  saveModal() {
-    this.setIsModalVisible(false);
-  }
-  showModal(rule) {
-    this.setIsModalVisible(true);
-    this.setValueRule(rule);
-  }
-  checkModalvisible() {
-    if (this.isModalVisible) {
-      this.modal = (
-        <EuiModal
-          onClose={() => {
-            this.closeModal();
-          }}
-        >
-          <EuiModalHeader>
-            <EuiModalHeaderTitle>{this.text} Rule Name</EuiModalHeaderTitle>
-          </EuiModalHeader>
-          <EuiModalBody>
-            <EuiText>
-              <EuiTextArea
-                placeholder="Rule Command"
-                aria-label="Rule Command"
-                value={this.valueRule}
-                onChange={(e) => this.onChangeText(e)}
-              />
-            </EuiText>
-          </EuiModalBody>
-          <EuiModalFooter>
-            <EuiButton
-              onClick={() => {
-                this.saveModal();
-              }}
-            >
-              Save
-            </EuiButton>
-            <EuiSpacer />
-            <EuiButton
-              onClick={() => {
-                this.closeModal();
-              }}
-              fill
-            >
-              Close
-            </EuiButton>
-          </EuiModalFooter>
-        </EuiModal>
-      );
-    }
-    return this.modal;
-  }
-}
-
-class createSwitch {
-  constructor(checked, setChecked) {
-    this.checked = checked;
-    this.setChecked = setChecked;
-  }
-  onChange = (e) => {
-    this.setChecked(e.target.checked);
-  };
 }
 
 // const ContentBody = ({match}) => {
@@ -346,22 +256,6 @@ export const AgentControllerApp = ({
     onSelectionChange: onSelectionChange
   };
 
-  // Use React hooks to manage state.
-  const [timestamp, setTimestamp] = useState<string | undefined>();
-
-  const onClickHandler = () => {
-    // Use the core http service to make a response to the server API.
-    http.get('/api/agent_controller/example').then((res) => {
-      setTimestamp(res.time);
-      // Use the core notifications service to display a success message.
-      notifications.toasts.addSuccess(
-        i18n.translate('agentController.dataUpdated', {
-          defaultMessage: 'Data updated',
-        })
-      );
-    });
-  };
-
   const [position, setPosition] = useState("fixed");
 
   //get response from HTTP
@@ -471,8 +365,18 @@ export const AgentControllerApp = ({
     const [selectedItemName, setSelectedItem] = useState("default");
     const history = useHistory();
     setService(history.location.pathname.replace(/.*\//, ""));
-    let delete_first_slash = history.location.pathname.replace(/\//, "")
-    setURL("/api/agent_controller/"+delete_first_slash.replace(/(\/\/[^\/]+)?\/.*/, '$1'));
+
+    const path= () => {
+      let delete_first_slash = history.location.pathname.replace(/\//, "");
+      let resPath = delete_first_slash.replace(/(\/\/[^\/]+)?\/.*/, '$1');
+      if (resPath == "") {
+        return "default";
+      } else {
+        return resPath;
+      }
+    };
+
+    setURL("/api/agent_controller/"+path());
   
     const toggleOpenOnMobile = () => {
       setIsSideNavOpenOnMobile(!isSideNavOpenOnMobile);
@@ -520,7 +424,7 @@ export const AgentControllerApp = ({
     return(
       <>
         <EuiSideNav
-          mobileTitle="Navigate within $APP_NAME"
+          mobileTitle={"Navigate On "+PLUGIN_NAME}
           toggleOpenOnMobile={toggleOpenOnMobile}
           isOpenOnMobile={isSideNavOpenOnMobile}
           items={sideNav}
