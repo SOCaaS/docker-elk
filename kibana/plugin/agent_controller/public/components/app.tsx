@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { i18n } from '@kbn/i18n';
 import { FormattedMessage, I18nProvider } from '@kbn/i18n/react';
 import { BrowserRouter as Router, Route, Switch, useHistory} from 'react-router-dom';
+
 import { createDataStore } from "../data_store/data_store.ts";
+import { createSwitch } from "./createSwitch.tsx"
+import { myModal } from "./myModal.tsx"
 // import { mainSideNav }  from './mainsidenav.tsx';
 
 import {
@@ -45,91 +48,6 @@ interface AgentControllerAppDeps {
   notifications: CoreStart['notifications'];
   http: CoreStart['http'];
   navigation: NavigationPublicPluginStart;
-}
-
-class myModal {
-  constructor(
-    isModalVisible,
-    setIsModalVisible,
-    valueRule,
-    setValueRule,
-    text
-  ) {
-    this.isModalVisible = isModalVisible;
-    this.setIsModalVisible = setIsModalVisible;
-    this.valueRule = valueRule;
-    this.setValueRule = setValueRule;
-    let modal;
-    this.modal = modal;
-    this.text = text;
-  }
-  onChangeText = (e) => {
-    this.setValueRule(e.target.valueRule);
-  };
-  closeModal() {
-    this.setIsModalVisible(false);
-  }
-  saveModal() {
-    this.setIsModalVisible(false);
-  }
-  showModal(rule) {
-    this.setIsModalVisible(true);
-    this.setValueRule(rule);
-  }
-  checkModalvisible() {
-    if (this.isModalVisible) {
-      this.modal = (
-        <EuiModal
-          onClose={() => {
-            this.closeModal();
-          }}
-        >
-          <EuiModalHeader>
-            <EuiModalHeaderTitle>{this.text} Rule Name</EuiModalHeaderTitle>
-          </EuiModalHeader>
-          <EuiModalBody>
-            <EuiText>
-              <EuiTextArea
-                placeholder="Rule Command"
-                aria-label="Rule Command"
-                value={this.valueRule}
-                onChange={(e) => this.onChangeText(e)}
-              />
-            </EuiText>
-          </EuiModalBody>
-          <EuiModalFooter>
-            <EuiButton
-              onClick={() => {
-                this.saveModal();
-              }}
-            >
-              Save
-            </EuiButton>
-            <EuiSpacer />
-            <EuiButton
-              onClick={() => {
-                this.closeModal();
-              }}
-              fill
-            >
-              Close
-            </EuiButton>
-          </EuiModalFooter>
-        </EuiModal>
-      );
-    }
-    return this.modal;
-  }
-}
-
-class createSwitch {
-  constructor(checked, setChecked) {
-    this.checked = checked;
-    this.setChecked = setChecked;
-  }
-  onChange = (e) => {
-    this.setChecked(e.target.checked);
-  };
 }
 
 // const ContentBody = ({match}) => {
