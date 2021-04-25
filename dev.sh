@@ -1,28 +1,34 @@
-echo ⚙ "Initial Setup" ⚙
-echo 📚 "Update Repository"
+echo -e ⚙ "Initial Setup" ⚙
+echo -e "\n📚 Updating Repository"
 apt update
 
-echo 🐳 "Install Docker.io & Docker-Compose"
+echo -e "\n🐳 Install Docker.io & Docker-Compose"
 apt install -y docker.io docker-compose
 
-echo ⚙ "Install Tools"
+echo -e "\n⚙ Install Tools"
 apt install -y inotify-tools
-docker-compose -f docker-compose.local.yml up --build -d kibana; 
+
+echo -e "\n"🏃‍♂️🏃‍♀️🏃‍♂️" \033[32mStart Building\t-\tNumber:0\033[0m" ⛏⚒🛠;
+docker-compose -f docker-compose.local.yml build --parallel kibana elasticsearch
+docker-compose -f docker-compose.local.yml up --build -d kibana;
+echo -e 🍻🍺🎉 "\033[32mBuild finished\t-\tNumber:0\033[0m" 🍻🍺🎉; 
 
 trap ctrl_c INT
 
 function ctrl_c() {
+    echo -e "\n"⌚🛑 "\033[5;91mWait for docker-elk to turn off!\033[0m" 🛑⌛
     docker-compose -f docker-compose.local.yml down -v
     docker image prune -f;
-    echo "🙏 Thank you for using dev.sh tool"
+    echo -e "🙏 \033[34mThank you for using dev.sh tool 🙏\033[0m"
 }
 
 function check_log() {
+    echo -e ⌚🛑 "\033[5;91mWait for kibana to turn on!\033[0m" 🛑⌛
     ( docker-compose -f docker-compose.local.yml logs -f kibana & ) | grep -q "http server running at http://0.0.0.0:5601"
-    echo  "👍 Kibana is up and ready to be tested! 💻"
+    echo -e  "👍 \033[32mKibana is up and ready to be tested!\033[0m 💻"
+    echo -e ⏩⏩⏩ "\033[5;96mBuild on update\033[0m"
 }
 
-echo ⌚ "Wait for kibana to turn on!" ⌛
 check_log
 echo 👻 "Creating 5 Agent Service!" 👻
 for a in {1..5}
@@ -38,19 +44,15 @@ do
     printf "\n"
 done
 
-# clear
-
-echo ⏩⏩⏩ "Build on update"
-
 #!/bin/bash
 i=$((i+1))
 
 while inotifywait -qqre modify "$(pwd)"; 
 do 
-    echo 🏃‍♂️🏃‍♀️🏃‍♂️🏃‍♀️🏃‍♂️ "Start Building - Number:$i" ⛏⚒🛠;
+    echo -e "\n" 🏃‍♂️🏃‍♀️🏃‍♂️ "\033[32mStart Building\t-\tNumber:$i\033[0m" ⛏⚒🛠;
     docker-compose -f docker-compose.local.yml up --build -d kibana; 
-    echo 🍻🍺🎉 "Build finished - Number:$i";
-    echo ✔ "Git Branch"
+    echo -e 🍻🍺🎉 "\033[32mBuild finished\t-\tNumber:$i\033[0m" 🍻🍺🎉;
+    echo -e ✔ "\033[100mGit Branch\033[0m"
     git branch;
     i=$((i+1))
     check_log &
