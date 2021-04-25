@@ -256,22 +256,6 @@ export const AgentControllerApp = ({
     onSelectionChange: onSelectionChange
   };
 
-  // Use React hooks to manage state.
-  const [timestamp, setTimestamp] = useState<string | undefined>();
-
-  const onClickHandler = () => {
-    // Use the core http service to make a response to the server API.
-    http.get('/api/agent_controller/example').then((res) => {
-      setTimestamp(res.time);
-      // Use the core notifications service to display a success message.
-      notifications.toasts.addSuccess(
-        i18n.translate('agentController.dataUpdated', {
-          defaultMessage: 'Data updated',
-        })
-      );
-    });
-  };
-
   const [position, setPosition] = useState("fixed");
 
   //get response from HTTP
