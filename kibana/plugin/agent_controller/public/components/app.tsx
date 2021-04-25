@@ -365,8 +365,18 @@ export const AgentControllerApp = ({
     const [selectedItemName, setSelectedItem] = useState("default");
     const history = useHistory();
     setService(history.location.pathname.replace(/.*\//, ""));
-    let delete_first_slash = history.location.pathname.replace(/\//, "")
-    setURL("/api/agent_controller/"+delete_first_slash.replace(/(\/\/[^\/]+)?\/.*/, '$1'));
+
+    const path= () => {
+      let delete_first_slash = history.location.pathname.replace(/\//, "");
+      let resPath = delete_first_slash.replace(/(\/\/[^\/]+)?\/.*/, '$1');
+      if (resPath == "") {
+        return "default";
+      } else {
+        return resPath;
+      }
+    };
+
+    setURL("/api/agent_controller/"+path());
   
     const toggleOpenOnMobile = () => {
       setIsSideNavOpenOnMobile(!isSideNavOpenOnMobile);
