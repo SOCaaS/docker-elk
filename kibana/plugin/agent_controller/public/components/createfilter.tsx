@@ -1,10 +1,3 @@
-import React from 'react';
-
-import {
-    Euiselect,
-
-} from '@elastic/eui';
-
 export const onChangeFilter_interface = (e, current_url, setAgentValue) => {
     fetch(current_url+"/interface", {
       method: "POST",
