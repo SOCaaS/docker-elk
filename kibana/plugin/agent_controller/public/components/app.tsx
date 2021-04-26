@@ -266,32 +266,6 @@ export const AgentControllerApp = ({
     }
   ];
 
- 
-  // const controlCenter = () => {
-  //   let centerArr = [];
-  //   let size  = 0;
-  //   if(ruleID.length >= 3){
-  //     size = 3;
-  //   }
-  //   else{
-  //     size = ruleID.length;
-  //   }
-
-  //   for (let x = 0; x < size; x++){
-  //     let modal = ( 
-  //         <EuiSwitch
-  //         label={ruleID[x]+": "+ruleName[x]}
-  //         checked={agentStatus[x]}
-  //         onChange={(e) => setRuleStatus_on_change(e, x, current_url, currentService, setAgentStatus, agentStatus)}
-  //         />
-  //     );
-  //     centerArr.push(modal);
-  //     centerArr.push(<EuiSpacer/>);
-  //   }
-  // return centerArr;
-  // }
-
-
   const onChangeFilter = (e) => {
     console.log(e.target.value)
   };
