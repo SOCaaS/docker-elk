@@ -18,7 +18,7 @@ export function defineRoutes(router: IRouter) {
               must_not : [
                 {
                   match : {
-                    _id : "default
+                    _id : "default"
                   },
                 },
               ]
