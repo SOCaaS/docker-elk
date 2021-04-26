@@ -355,8 +355,10 @@ export const AgentControllerApp = ({
         icon: <EuiIcon type="menu" />,
         items: [
             createItem("Default", {
-                createItem('TShark', {}, "default/tshark"),
-                createItem('Suricata', {}, "default/suricata")
+                items: [
+                    createItem('TShark', {}, "default/tshark"),
+                    createItem('Suricata', {}, "default/suricata"),
+                ],
             }, "default"),
         ],}, "default"),
     ]
