@@ -42,19 +42,6 @@ interface AgentControllerAppDeps {
   navigation: NavigationPublicPluginStart;
 }
 
-// const ContentBody = ({match}) => {
-//   const {
-//     params: {agentService_id,agent_id}
-//   } = match;
-  
-//   return(
-//     <>
-//       <h1> {agentService_id} </h1>
-//       <h2> {agent_id} </h2>
-//     </>
-//   );
-// };
-
 export const AgentControllerApp = ({
   basename,
   notifications,
@@ -62,32 +49,7 @@ export const AgentControllerApp = ({
   navigation,
 }: AgentControllerAppDeps) => {
   const default_url  = "/api/agent_controller/default";
-
   const [current_url, setURL] = useState(default_url);
-  //add and edit button
-  const [valueRuleAdd, setValueRuleAdd] = useState("");
-  const [valueRuleEdit, setValueRuleEdit] = useState("");
-  const [isModalVisibleAdd, setIsModalVisibleAdd] = useState(false);
-  const [isModalVisibleEdit, setIsModalVisibleEdit] = useState(false);
-
-  let createModalAdd = new myModal(
-    isModalVisibleAdd,
-    setIsModalVisibleAdd,
-    valueRuleAdd,
-    setValueRuleAdd,
-    "Add"
-  );
-  let createModalEdit = new myModal(
-    isModalVisibleEdit,
-    setIsModalVisibleEdit,
-    valueRuleEdit,
-    setValueRuleEdit,
-    "Edit"
-  );
-  let modalAdd = createModalAdd.checkModalvisible();
-  let modalEdit = createModalEdit.checkModalvisible();
-
-  //EuiBasicTable
   const [ruleID, setRuleID] = useState([]);
   const [ruleName, setruleName] = useState([]);
   const [ruleLength, setRuleLength] = useState<number | undefined>();
@@ -114,6 +76,21 @@ export const AgentControllerApp = ({
       setAgentStatus(ruleStatus);
     });
   }, [currentService, current_url])
+  
+  //add and edit button
+  const [getID, setID] = useState("");
+  const [valueRule, setValueRule] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalTitle, setmodalTitle] = useState("");
+
+  const showModal = (rule, text, id) =>{
+    setIsModalVisible(true);
+    setValueRule(rule);
+    setmodalTitle(text);
+    setID(id);
+  }
+  //EuiBasicTable
+  
 
   const store = createDataStore(ruleID, ruleName, ruleLength);
 
@@ -217,7 +194,7 @@ export const AgentControllerApp = ({
           icon: "pencil",
           onClick: (e) => {
             console.log(e.ruleName);
-            createModalEdit.showModal(e.ruleName);
+            showModal(e.ruleName, "Edit", e.id);
           }
         }
       ]
@@ -549,8 +526,8 @@ export const AgentControllerApp = ({
                            <EuiButton
                              color={"primary"}
                              onClick={() => {
-                               createModalAdd.showModal();
-                             }}
+                              showModal("", "Add");
+                            }}
                              iconType="plusInCircle"
                              aria-label="Next"
                            >
@@ -572,8 +549,7 @@ export const AgentControllerApp = ({
                          selection={selection}
                          onChange={onTableChange}
                        />
-                       {modalAdd}
-                       {modalEdit}
+                      {myModal(current_url, currentService, getID, ruleID, ruleName, setruleName, setRuleID, setRuleLength, isModalVisible, setIsModalVisible, modalTitle, setValueRule, valueRule)}
                      </EuiFlexItem>
                    </EuiFlexGroup>
                    </EuiPanel>
