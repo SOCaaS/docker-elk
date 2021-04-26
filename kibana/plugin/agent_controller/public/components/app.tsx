@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Switch, useHistory} from 'react-router-
 import { createDataStore } from "../data_store/data_store.ts";
 import { setActive_on_change,  controlCenter } from "./createSwitch.tsx"
 import { myModal } from "./myModal.tsx"
+import {onChangeFilter_interface, onChangeFilter_frequency} from "./createfilter.tsx"
 // import { mainSideNav }  from './mainsidenav.tsx';
 
 import {
@@ -315,7 +316,6 @@ export const AgentControllerApp = ({
 
 
   const onChangeFilter = (e) => {
-    // setValue(e.target.value);
     console.log(e.target.value)
   };
 
@@ -505,7 +505,7 @@ export const AgentControllerApp = ({
                                 id="selectDocExample"
                                 options={agentInterface}
                                 value={agentValue}
-                                onChange={(e) => onChangeFilter(e)}
+                                onChange={(e) => onChangeFilter_interface(e, current_url, setAgentValue)}
                                 aria-label="Use aria labels when no actual label is in use"
                               />
                          </EuiFlexItem>
@@ -523,7 +523,7 @@ export const AgentControllerApp = ({
                                 id="selectDocExample"
                                 options={agentFrequencies}
                                 value={agentFrequency}
-                                onChange={(e) => onChangeFilter(e)}
+                                onChange={(e) => onChangeFilter_frequency(e,current_url,setFrequency)}
                                 aria-label="Use aria labels when no actual label is in use"
                               />
                          </EuiFlexItem>
