@@ -1,3 +1,10 @@
+import React from 'react';
+
+import {
+  EuiSwitch,
+  EuiSpacer,
+} from '@elastic/eui';
+
 //activate Active switch
 export const setActive_on_change = (e, current_url, setActive) => {
   fetch(current_url+"/status", {
