@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { i18n } from '@kbn/i18n';
 import { FormattedMessage, I18nProvider } from '@kbn/i18n/react';
 import { BrowserRouter as Router, Route, Switch, useHistory} from 'react-router-dom';
-
 import { createDataStore } from "../data_store/data_store.ts";
-import { createSwitch } from "./createSwitch.tsx"
+import { setActive_on_change,  controlCenter } from "./createSwitch.tsx"
 import { myModal } from "./myModal.tsx"
 // import { mainSideNav }  from './mainsidenav.tsx';
 
@@ -113,7 +112,7 @@ export const AgentControllerApp = ({
       setRuleLength(rules.length);
       setAgentStatus(ruleStatus);
     });
-  }, [currentService])
+  }, [currentService, current_url])
 
   const store = createDataStore(ruleID, ruleName, ruleLength);
 
@@ -268,17 +267,19 @@ export const AgentControllerApp = ({
   const [agentMemory, setMemory] = useState<string | undefined>();
 
   //set and get from backend
-  http.get(current_url).then((res) => {
-    var name = res["name"];
-    var nameCapitalized = name.charAt(0).toUpperCase() + name.slice(1);
-    setName(nameCapitalized);
-    setActive(res["active"]);
-    setIP(res["ip"]);
-    setAgentValue(res["interface"]);  
-    setFrequency(res["time"]);
-    setCPU(res["cpu"]);
-    setMemory(res["memory"]);
-  });
+  useEffect(() => {
+    http.get(current_url).then((res) => {
+      var name = res["name"];
+      var nameCapitalized = name.charAt(0).toUpperCase() + name.slice(1);
+      setName(nameCapitalized);
+      setActive(res["active"]);
+      setIP(res["ip"]);
+      setAgentValue(res["interface"]);  
+      setFrequency(res["time"]);
+      setCPU(res["cpu"]);
+      setMemory(res["memory"]);
+    });
+  }, [current_url])
 
   const sections = [
     {
@@ -286,34 +287,31 @@ export const AgentControllerApp = ({
       borders: "right"
     }
   ];
-  //swtich Active
-  let createSwitchActive = new createSwitch(agentActive, setActive);
 
-  //switch Rule
-  const controlCenter = () => {
-    const [agentStatus1, setAgentStatus1] = useState(agentStatus[0])
-    let createSwitchRule = new createSwitch(agentStatus1, setAgentStatus1);
-    let centerArr = [];
-    let size  = 0;
-    if(ruleID.length >= 3){
-      size = 3;
-    }
-    else{
-      size = ruleID.length;
-    }
-    for (let x = 0; x < size; x++){
-      let modal = ( 
-          <EuiSwitch
-          label={ruleID[x]+": "+ruleName[x]}
-          checked={createSwitchRule.checked}
-          onChange={(e) => createSwitchRule.onChange(e)}
-          />
-      );
-      centerArr.push(modal);
-      centerArr.push(<EuiSpacer/>);
-    }
-  return centerArr;
-  }
+ 
+  // const controlCenter = () => {
+  //   let centerArr = [];
+  //   let size  = 0;
+  //   if(ruleID.length >= 3){
+  //     size = 3;
+  //   }
+  //   else{
+  //     size = ruleID.length;
+  //   }
+
+  //   for (let x = 0; x < size; x++){
+  //     let modal = ( 
+  //         <EuiSwitch
+  //         label={ruleID[x]+": "+ruleName[x]}
+  //         checked={agentStatus[x]}
+  //         onChange={(e) => setRuleStatus_on_change(e, x, current_url, currentService, setAgentStatus, agentStatus)}
+  //         />
+  //     );
+  //     centerArr.push(modal);
+  //     centerArr.push(<EuiSpacer/>);
+  //   }
+  // return centerArr;
+  // }
 
 
   const onChangeFilter = (e) => {
@@ -471,8 +469,8 @@ export const AgentControllerApp = ({
                      <EuiFlexItem>
                        <EuiSwitch
                          label="Active"
-                         checked={createSwitchActive.checked}
-                         onChange={(e) => createSwitchActive.onChange(e)}
+                         checked={agentActive}
+                         onChange={(e) => setActive_on_change(e, current_url, setActive)}
                        />
                      </EuiFlexItem>
                      <EuiFlexItem> 
@@ -588,7 +586,7 @@ export const AgentControllerApp = ({
                    <EuiPanel paddingSize="l">
                      <EuiFlexGroup gutterSize="none">
                        <EuiFlexItem>
-                         {controlCenter()}
+                         {controlCenter(ruleID, ruleName, current_url, currentService, setAgentStatus, agentStatus)}
                        </EuiFlexItem>
                      </EuiFlexGroup>
                    </EuiPanel>
