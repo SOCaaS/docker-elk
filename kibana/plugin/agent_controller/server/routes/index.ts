@@ -19,10 +19,10 @@ export function defineRoutes(router: IRouter) {
                 {
                   match : {
                     _id : "default
-                  }
-                }
+                  },
+                },
               ]
-            }
+            },
           },
           fields: ["name"],
           _source: false
