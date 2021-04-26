@@ -353,7 +353,12 @@ export const AgentControllerApp = ({
     const sideNav = [
       createItem('Navigation', {
         icon: <EuiIcon type="menu" />,
-        items: [],}, "default"),
+        items: [
+            createItem("Default", {
+                createItem('TShark', {}, "default/tshark"),
+                createItem('Suricata', {}, "default/suricata")
+            }, "default"),
+        ],}, "default"),
     ]
     
     for (let x in sideNavData){
