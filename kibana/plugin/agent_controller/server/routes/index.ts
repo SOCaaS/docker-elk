@@ -3,19 +3,6 @@ import { SearchResponse } from 'elasticsearch';
 import { schema } from '@kbn/config-schema';
 
 export function defineRoutes(router: IRouter) {
-  // router.get(
-  //   {
-  //     path: '/api/agent_controller/example',
-  //     validate: false,
-  //   },
-  //   async (context, request, response) => {
-  //     return response.ok({
-  //       body: {
-  //         time: new Date().toISOString(),
-  //       },
-  //     });
-  //   }
-  // );
   
   router.get(
     {
@@ -26,6 +13,17 @@ export function defineRoutes(router: IRouter) {
       const params = {
         index: "agent-index",
         body: {
+          query: {
+            bool: {
+              must_not : [
+                {
+                  match : {
+                    _id : "default"
+                  },
+                },
+              ]
+            },
+          },
           fields: ["name"],
           _source: false
         },
