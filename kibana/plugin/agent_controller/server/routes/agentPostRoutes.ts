@@ -5,6 +5,50 @@ import { schema } from '@kbn/config-schema';
 export function agentPostRoutes(router: IRouter) {
   router.post(
     {
+        path: '/api/agent_controller/{id}/activeService',
+        validate: {
+            params: schema.object(
+                {
+                    id: schema.string(),
+                }
+            ),
+            body: schema.object(
+                {
+                    status: schema.boolean(),
+                    service: schema.string()
+                }
+            ),
+        },
+    },
+    async (context, request, response) => {
+
+        const params = {
+          index: "agent-index",
+          id: request.params.id,
+          body: {
+            script : {
+              source: "ctx._source.services."+request.body.service+".active = params.active",
+              lang: "painless",
+              params : {
+                active : request.body.status
+              }
+            }
+          }
+        }
+        await context.core.elasticsearch.legacy.client.callAsCurrentUser('update', params);
+        return response.ok({ 
+          body: {
+            message: "okay",
+            response: request.body
+          }
+         });
+    }
+  );
+
+
+
+  router.post(
+    {
         path: '/api/agent_controller/{id}/edit',
         validate: {
             params: schema.object(
