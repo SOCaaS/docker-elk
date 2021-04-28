@@ -131,7 +131,6 @@ export const AgentControllerApp = ({
 
     //loop fetch based on ID
     for (let x = 0; x < selectedItems.length; x++){
-      console.log("ruleID", selectedItems[x]["ruleID"], "ruleName", selectedItems[x]["ruleName"], "id", selectedItems[x]["ruleID"]-x, "idarr", idArr[x]);
         fetch(current_url+"/deleteRule", {
           method: "POST",
           headers: {
@@ -162,7 +161,6 @@ export const AgentControllerApp = ({
     for(let i = 0;  i < setruleArr.length; i++){
       setruleArr[i] = i + 1;
     }
-    console.log("setrulu", setruleArr);
     //set back new value
     store.deleteRules(setRuleLength, ...selectedItems.map((rule) => rule.id));
     setSelectedItems([]);
