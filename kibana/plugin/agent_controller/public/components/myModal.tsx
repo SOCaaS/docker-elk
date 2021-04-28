@@ -48,7 +48,13 @@ const saveModal = (current_url, currentService, getID, ruleID, ruleName, setrule
           let ruleArr = [...ruleID];
           let detailArr = [...ruleName];
           detailArr.push(response.response["rule"]);
-          ruleArr.push(ruleID[ruleID.length - 1] + 1);
+          let length = Math.abs(ruleArr.length - 1);
+          if(ruleArr.length <= 0){
+            ruleArr.push(1);
+          }
+          else{
+            ruleArr.push(ruleID[length] + 1);
+          }
           setRuleID(ruleArr);
           setruleName(detailArr);
           setRuleLength(ruleArr.length);

@@ -116,8 +116,33 @@ export const AgentControllerApp = ({
   };
 
   const onClickDelete = () => {
-    store.deleteRules(...selectedItems.map((rule) => rule.id));
-    setSelectedItems([]);
+      for (let x = 0; x < selectedItems.length; x++){
+          fetch(current_url+"/deleteRule", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "kbn-xsrf" : "reporting"
+            },
+            body: JSON.stringify({
+              id: selectedItems[x]["ruleID"]-x,
+              service: currentService,
+            }) 
+          })
+            .then(response => response.json())
+            .then(response => {
+              console.log(response.response)
+             
+            }) 
+            .catch(err => console.log("api Error: ", err));
+            let ruleArr = [...ruleID];
+            let nameArr = [...ruleName];
+            ruleArr.splice(selectedItems[x]["ruleID"]-x-1, 1);
+            nameArr.splice(selectedItems[x]["ruleID"]-x-1, 1);
+            setRuleID(ruleArr);
+            setruleName(nameArr);
+      }
+      store.deleteRules(setRuleLength, ...selectedItems.map((rule) => rule.id));
+      setSelectedItems([]);
   };
 
   const renderDeleteButton = () => {

@@ -63,11 +63,12 @@ export const createDataStore = (ruleID, ruleName, ruleLength) => {
       };
     },
 
-    deleteRules: (...ids) => {
+    deleteRules: (setRuleLength, ...ids) => {
       ids.forEach((id) => {
         const index = rules.findIndex((rule) => rule.id === id);
         if (index >= 0) {
           rules.splice(index, 1);
+          setRuleLength(rules.length);
         }
       });
     },
