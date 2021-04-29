@@ -8,7 +8,6 @@ import { createDataStore } from "../data_store/data_store.ts";
 import { setActive_on_change, setServiceStatus_onchange, controlCenter } from "./createSwitch.tsx"
 import { myModal } from "./myModal.tsx"
 import { onChangeFilter_interface, onChangeFilter_frequency } from "./createfilter.tsx"
-import { path } from "./function.tsx"
 // import { mainSideNav }  from './mainsidenav.tsx';
 
 import {
