@@ -386,7 +386,8 @@ export const AgentControllerApp = ({
   
   //get sidenavdata values, store in array
   const [sideNavData, setsideNavData] = useState([]);
-  useEffect(() => {
+
+  const getSideNavContent = () => {
     http.get('/api/agent_controller/sidenav_content').then((res) => {
       let newArr = [];
       for (let i = 0; i < res.length; i++) {
@@ -394,6 +395,13 @@ export const AgentControllerApp = ({
       }
       setsideNavData(newArr); 
     });
+  }
+
+  useEffect(() => {
+    getSideNavContent();
+    setInterval(() =>{
+      getSideNavContent();
+    }, 15000);
   }, [])
   
   const path= (history) => {
