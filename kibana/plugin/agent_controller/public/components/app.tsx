@@ -316,9 +316,36 @@ export const AgentControllerApp = ({
     }
   ];
 
-  const onChangeFilter = (e) => {
-    console.log(e.target.value)
-  };
+  const deleteAgent = () => {
+    const history = useHistory();
+    const onClickDeleteAgent = () => {
+      fetch(current_url+"/delete", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "kbn-xsrf" : "reporting"
+        }
+      })
+        .then(response => response.json())
+        .then(() =>{
+          setURL("/api/agent_controller/default");
+          history.push("/api/agent_controller/default");
+          window.location.reload();
+        }) 
+        .catch(err => console.log("api Error: ", err));
+      };
+
+      return(
+        <>
+          <EuiButton color="danger" iconType="trash"  
+          onClick={() => {
+            onClickDeleteAgent();
+          }}>
+          Delete
+          </EuiButton>
+        </>
+      );
+  }
 
 
   //get interface values, store in array
@@ -461,12 +488,8 @@ export const AgentControllerApp = ({
                    </h1>
                  </EuiTitle>
                  <Switch>  
-                   <Route path="/default"/>
-                    <Route path="/" >
-                      <EuiButton color="danger" iconType="trash" >
-                        Delete
-                      </EuiButton>
-                    </Route>     
+                    <Route path="/default"/>
+                    <Route path="/" component={deleteAgent}/>
                   </Switch>
                </EuiPageHeader>
              {/* <EuiPanel paddingSize="none" color="transparent"> */}
