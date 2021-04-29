@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forceUpdate } from 'react';
 import { i18n } from '@kbn/i18n';
 import { FormattedMessage, I18nProvider } from '@kbn/i18n/react';
 import { BrowserRouter as Router, Route, Switch, useHistory} from 'react-router-dom';
+
+// customfile
 import { createDataStore } from "../data_store/data_store.ts";
 import { setActive_on_change, setServiceStatus_onchange, controlCenter } from "./createSwitch.tsx"
 import { myModal } from "./myModal.tsx"
-import {onChangeFilter_interface, onChangeFilter_frequency} from "./createfilter.tsx"
+import { onChangeFilter_interface, onChangeFilter_frequency } from "./createfilter.tsx"
+import { path } from "./function.tsx"
 // import { mainSideNav }  from './mainsidenav.tsx';
 
 import {
@@ -328,9 +331,19 @@ export const AgentControllerApp = ({
       })
         .then(response => response.json())
         .then(() =>{
+          let id = path(history);
+
+          let newArr = [];
+          for (let x in sideNavData) {
+            if (sideNavData[x]["_id"] != id) {
+              newArr.push(sideNavData[x]);
+            }
+          }
+          setsideNavData(newArr);
+
           setURL("/api/agent_controller/default");
           history.push("/default");
-          window.location.reload();
+          
         }) 
         .catch(err => console.log("api Error: ", err));
       };
@@ -384,7 +397,16 @@ export const AgentControllerApp = ({
     });
   }, [])
   
-  
+  const path= (history) => {
+    let delete_first_slash = history.location.pathname.replace(/\//, "");
+    let resPath = delete_first_slash.replace(/(\/\/[^\/]+)?\/.*/, '$1');
+    if (resPath == "") {
+      return "default";
+    } else {
+      return resPath;
+    }
+  };
+
   const mainSideNav = () => {
     
     const [isSideNavOpenOnMobile, setIsSideNavOpenOnMobile] = useState(false);
@@ -392,17 +414,7 @@ export const AgentControllerApp = ({
     const history = useHistory();
     setService(history.location.pathname.replace(/.*\//, ""));
 
-    const path= () => {
-      let delete_first_slash = history.location.pathname.replace(/\//, "");
-      let resPath = delete_first_slash.replace(/(\/\/[^\/]+)?\/.*/, '$1');
-      if (resPath == "") {
-        return "default";
-      } else {
-        return resPath;
-      }
-    };
-
-    setURL("/api/agent_controller/"+path());
+    setURL("/api/agent_controller/"+path(history));
   
     const toggleOpenOnMobile = () => {
       setIsSideNavOpenOnMobile(!isSideNavOpenOnMobile);
