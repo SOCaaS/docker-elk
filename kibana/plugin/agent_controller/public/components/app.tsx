@@ -116,33 +116,56 @@ export const AgentControllerApp = ({
   };
 
   const onClickDelete = () => {
-      for (let x = 0; x < selectedItems.length; x++){
-          fetch(current_url+"/deleteRule", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "kbn-xsrf" : "reporting"
-            },
-            body: JSON.stringify({
-              id: selectedItems[x]["ruleID"]-x,
-              service: currentService,
-            }) 
-          })
-            .then(response => response.json())
-            .then(response => {
-              console.log(response.response)
-             
-            }) 
-            .catch(err => console.log("api Error: ", err));
-            let ruleArr = [...ruleID];
-            let nameArr = [...ruleName];
-            ruleArr.splice(selectedItems[x]["ruleID"]-x-1, 1);
-            nameArr.splice(selectedItems[x]["ruleID"]-x-1, 1);
-            setRuleID(ruleArr);
-            setruleName(nameArr);
-      }
-      store.deleteRules(setRuleLength, ...selectedItems.map((rule) => rule.id));
-      setSelectedItems([]);
+    //reorder array entry based on ID value
+    let idArr = []
+    for (let x = 0; x < selectedItems.length; x++){
+      idArr[x] = selectedItems[x]["ruleID"];
+      idArr.sort(function(a, b){return a - b});
+    }
+
+    //get rules from const
+    let getruleArr = [...ruleID];
+    let getnameArr = [...ruleName];
+    let setruleArr = [];
+    let setnameArr = [];
+
+    //loop fetch based on ID
+    for (let x = 0; x < selectedItems.length; x++){
+        fetch(current_url+"/deleteRule", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "kbn-xsrf" : "reporting"
+          },
+          body: JSON.stringify({
+            id: idArr[x]-x,
+            service: currentService,
+          }) 
+        })
+          .then(response => response.json())
+          .then(response => {
+
+          }) 
+          .catch(err => console.log("api Error: ", err));
+          //Splice index of deleted ID
+          var toRemove = selectedItems[x]["ruleID"];
+          var index = getruleArr.indexOf(toRemove);
+          if (index > -1) { //Make sure item is present in the array, without if condition, -n indexes will be considered from the end of the array.
+            setruleArr = getruleArr;
+            setruleArr.splice(index, 1);
+            getnameArr.splice(index, 1);
+            setnameArr= getnameArr;
+          }
+    }
+    //reassemble existing ID based on deletion
+    for(let i = 0;  i < setruleArr.length; i++){
+      setruleArr[i] = i + 1;
+    }
+    //set back new value
+    store.deleteRules(setRuleLength, ...selectedItems.map((rule) => rule.id));
+    setSelectedItems([]);
+    setRuleID(setruleArr);
+    setruleName(setnameArr);
   };
 
   const renderDeleteButton = () => {
