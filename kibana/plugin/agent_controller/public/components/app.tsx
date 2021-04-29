@@ -329,7 +329,7 @@ export const AgentControllerApp = ({
         .then(response => response.json())
         .then(() =>{
           setURL("/api/agent_controller/default");
-          history.push("/api/agent_controller/default");
+          history.push("/default");
           window.location.reload();
         }) 
         .catch(err => console.log("api Error: ", err));
