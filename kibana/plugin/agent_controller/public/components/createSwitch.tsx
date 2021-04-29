@@ -25,6 +25,25 @@ export const setActive_on_change = (e, current_url, setActive) => {
     .catch(err => console.log("api Error: ", err));
 }
 
+export const setServiceStatus_onchange = (e, current_url, setservicestatus, currentService) => {
+  fetch(current_url+"/activeService", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "kbn-xsrf" : "reporting"
+    },
+    body: JSON.stringify({
+      status : e.target.checked,
+      service : currentService
+    }) 
+  })
+    .then(response => response.json())
+    .then(response => {
+       console.log(response, response);
+      setservicestatus(response.response[status])
+    }) 
+    .catch(err => console.log("api Error: ", err));
+}
 //activate Active Rule Switch
 const setRuleStatus_on_change = (e, x, current_url, currentService, setAgentStatus, agentStatus) => {
   fetch(current_url+"/activeRule", {

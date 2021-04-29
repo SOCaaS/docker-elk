@@ -3,7 +3,7 @@ import { i18n } from '@kbn/i18n';
 import { FormattedMessage, I18nProvider } from '@kbn/i18n/react';
 import { BrowserRouter as Router, Route, Switch, useHistory} from 'react-router-dom';
 import { createDataStore } from "../data_store/data_store.ts";
-import { setActive_on_change,  controlCenter } from "./createSwitch.tsx"
+import { setActive_on_change, setServiceStatus_onchange, controlCenter } from "./createSwitch.tsx"
 import { myModal } from "./myModal.tsx"
 import {onChangeFilter_interface, onChangeFilter_frequency} from "./createfilter.tsx"
 // import { mainSideNav }  from './mainsidenav.tsx';
@@ -55,6 +55,7 @@ export const AgentControllerApp = ({
   const [ruleLength, setRuleLength] = useState<number | undefined>();
   const [currentService, setService] = useState<string | undefined>();
   const [agentStatus, setAgentStatus] = useState([]);
+  const [servicestatus, setservicestatus] = useState<boolean | undefined> ();
 
   useEffect(() => {
     http.get(current_url).then((res) => {
@@ -64,6 +65,7 @@ export const AgentControllerApp = ({
       let ruleStatus = [];
       if(currentService == "tshark" ||  currentService == "suricata"){  
         rules = res["services"][currentService]["rules"];
+        setservicestatus(res["services"][currentService]["active"])
         for (let i = 0; i < rules.length; i++) {
           ruleArr[i] = i + 1;
           detailArr.push(rules[i]["details"]); 
@@ -591,6 +593,12 @@ export const AgentControllerApp = ({
                    <EuiPanel paddingSize="l">
                      <EuiFlexGroup gutterSize="none">
                        <EuiFlexItem>
+                        <EuiSwitch
+                            label="Service Status"
+                            checked = {servicestatus}
+                            onChange={(e) => setServiceStatus_onchange(e, current_url, setservicestatus, currentService)}
+                            />
+                          <EuiSpacer/>
                          {controlCenter(ruleID, ruleName, current_url, currentService, setAgentStatus, agentStatus)}
                        </EuiFlexItem>
                      </EuiFlexGroup>
