@@ -39,7 +39,6 @@ export const setServiceStatus_onchange = (e, current_url, setservicestatus, curr
   })
     .then(response => response.json())
     .then(response => {
-       console.log(response, response);
       setservicestatus(response.response["status"])
     }) 
     .catch(err => console.log("api Error: ", err));
