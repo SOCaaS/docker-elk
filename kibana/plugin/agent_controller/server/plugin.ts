@@ -37,6 +37,7 @@ export class AgentControllerPlugin
 
 
   public start(core: CoreStart) {
+
     async function templateTask() {
       const params = JSON.parse(fs.readFileSync("./plugins/agentController/server/templates/agent-index.json"));
       const result = await core.elasticsearch.client.asInternalUser.indices.putTemplate(params);
@@ -46,6 +47,13 @@ export class AgentControllerPlugin
       const params = JSON.parse(fs.readFileSync("./plugins/agentController/server/templates/agent-default.json"));
       const result = await core.elasticsearch.client.asInternalUser.create(params);
     }
+
+    /*
+
+      create default index and default template of agent controller
+
+    */
+
     console.log("Add Plugin Template Installation!");
     templateTask();
     console.log("Add Plugin Default Document Installation!");

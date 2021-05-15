@@ -3,6 +3,10 @@ import { SearchResponse } from 'elasticsearch';
 import { schema } from '@kbn/config-schema';
 
 export function agentPostRoutes(router: IRouter) {
+  /*
+    this is for activating the rule either tshark or suricata will be set through this api.
+  */
+
   router.post(
     {
         path: '/api/agent_controller/{id}/activeService',
@@ -45,7 +49,10 @@ export function agentPostRoutes(router: IRouter) {
     }
   );
 
-
+  /*
+    This ../../edit api is used for editing rules in agent controller.
+    Either suricata or tshark rules, it dynamically can adjust to it. (on Rule body)
+  */
 
   router.post(
     {
@@ -89,6 +96,10 @@ export function agentPostRoutes(router: IRouter) {
          });
     }
   );
+
+  /* 
+    Like the edit, this add rules.
+  */
 
 
   router.post(
@@ -138,6 +149,9 @@ export function agentPostRoutes(router: IRouter) {
     }
   );
 
+  /*
+    this is for activating the rules inside either tshark or suricata will be set through this api.
+  */
 
   router.post(
     {
@@ -182,6 +196,9 @@ export function agentPostRoutes(router: IRouter) {
     }
   );
 
+  /*
+    Api for activating the agent service filebeat to start.
+  */
 
   router.post(
     {
@@ -224,6 +241,11 @@ export function agentPostRoutes(router: IRouter) {
     }
   );
 
+  /*
+    this api get the interface pick on agent controller.
+    ex. eth0 or eth1 interfaces which on agent service
+  */
+
   router.post(
     {
         path: '/api/agent_controller/{id}/interface',
@@ -265,6 +287,11 @@ export function agentPostRoutes(router: IRouter) {
     }
   );
 
+  /* 
+    Help delete a service if the service stuck on agent controller
+    while it has been deleted on the server end.
+  */
+
   router.post(
     {
         path: '/api/agent_controller/{id}/delete',
@@ -291,6 +318,10 @@ export function agentPostRoutes(router: IRouter) {
          });
     }
   );
+
+  /* 
+    delete tshark or suricata rule from the list of data.
+  */
 
   router.post(
     {

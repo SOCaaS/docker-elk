@@ -3,6 +3,10 @@ import { SearchResponse } from 'elasticsearch';
 import { schema } from '@kbn/config-schema';
 
 export function defineRoutes(router: IRouter) {
+
+  /*
+    get sidenav data from elasticsearch to be display by agent contoller interface
+  */
   
   router.get(
     {
@@ -34,6 +38,10 @@ export function defineRoutes(router: IRouter) {
       });
     }
   );
+
+  /*
+    get each agent controller id details which was store in elasticsearch
+  */
 
   router.get(
     {
