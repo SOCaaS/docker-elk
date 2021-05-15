@@ -1,9 +1,21 @@
+//@ezeutno Ivan Ezechial Suratno
+
 import { IRouter, ILegacyScopedClusterClient } from '../../../../src/core/server';
 import { SearchResponse } from 'elasticsearch';
 import { schema } from '@kbn/config-schema';
 import { v4 as uuidv4 } from 'uuid';
 
 export function agentBridgeRoutes(router: IRouter) {
+
+  /* 
+    This api will create a agent service index on elasticsearch.
+    It would accept a post messsage ../../create path.
+
+    the api would create an elsticsearch index based on default data that 
+    have been put in elasticsearch, which default to ./templates/agent-defaults.json
+    
+    This api used on agent service initialization.
+  */
 
   router.post(
     {
@@ -52,6 +64,11 @@ export function agentBridgeRoutes(router: IRouter) {
       })
     }
   )
+
+  /*
+    This api recived a usage stats from the client to update on elasticsearch.
+    The usage state consist of CPU and Memory of the Client in Agent Service
+  */
 
   router.post(
     {
@@ -110,6 +127,13 @@ export function agentBridgeRoutes(router: IRouter) {
        });
     }
   );
+
+  /*
+    This api setup the frequencies of checking on agent controller.
+    So, how long does the agent service check to kibana. 
+
+    This would be determine using this post method.
+  */
 
   router.post(
     {
