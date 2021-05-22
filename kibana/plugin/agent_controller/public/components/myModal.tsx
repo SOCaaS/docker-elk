@@ -29,7 +29,7 @@ const saveModal = (current_url, currentService, getID, ruleID, ruleName, setrule
         id : getID + 1//id to be edited (parameter to be passed)
     }
   }
-  fetch(current_url+"/"+modalTitle.toLowerCase(), { //post to edit or add api based on the modalTitle
+  fetch(current_url+"/"+modalTitle.toLowerCase(), { //post to edit or add API based on the modalTitle
     method: "POST",
     headers: {
       "Content-Type": "application/json",

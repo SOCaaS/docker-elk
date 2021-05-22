@@ -19,7 +19,6 @@ export const setActive_on_change = (e, current_url, setActive) => {
   })
     .then(response => response.json())
     .then(response => {
-      // console.log("response", response);
       setActive(response.response["status"])
     }) 
     .catch(err => console.log("api Error: ", err));
@@ -39,7 +38,7 @@ export const setServiceStatus_onchange = (e, current_url, setservicestatus, curr
   })
     .then(response => response.json())
     .then(response => {
-      setservicestatus(response.response["status"])
+      setservicestatus(response.response["status"])//set service status after POST
     }) 
     .catch(err => console.log("api Error: ", err));
 }
@@ -59,7 +58,7 @@ const setRuleStatus_on_change = (e, x, current_url, currentService, setAgentStat
   })
     .then(response => response.json())
     .then(response => {
-      setAgentStatus({ ...agentStatus, [x]: response.response["status"] })
+      setAgentStatus({ ...agentStatus, [x]: response.response["status"] }) //set Agent Status after POST
     }) 
     .catch(err => console.log("api Error: ", err));
 }
@@ -68,13 +67,14 @@ const setRuleStatus_on_change = (e, x, current_url, currentService, setAgentStat
 export const controlCenter = (ruleID, ruleName, current_url, currentService, setAgentStatus, agentStatus) => {
     let centerArr = [];
     let size  = 0;
+    //ensures that only 3 switches maximum are created
     if(ruleID.length >= 3){
       size = 3;
     }
     else{
       size = ruleID.length;
     }
-
+    //loop that generates the switch based on size
     for (let x = 0; x < size; x++){
       let modal = ( 
           <EuiSwitch

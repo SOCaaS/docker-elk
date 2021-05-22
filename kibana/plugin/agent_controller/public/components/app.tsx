@@ -72,19 +72,19 @@ export const AgentControllerApp = ({
         setservicestatus(res["services"][currentService]["active"])
         for (let i = 0; i < rules.length; i++) {
           ruleArr[i] = i + 1;
-          detailArr.push(rules[i]["details"]); //get rule deatil
+          detailArr.push(rules[i]["details"]); //get rule detail
           ruleStatus.push(rules[i]["active"]); //get rule status
         }
       }
       setRuleID(ruleArr);//set ruleID
       setruleName(detailArr);//set rule detail
-      setRuleLength(rules.length);// to act as the
+      setRuleLength(rules.length);//set length of the table entries
       setAgentStatus(ruleStatus);
     });
   }, [currentService, current_url])
   
   //add and edit button
-  const [getID, setID] = useState("");//get ids  of the editted or addedle
+  const [getID, setID] = useState("");//get ids for editing rule
   const [valueRule, setValueRule] = useState("");//rules value
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalTitle, setmodalTitle] = useState("");
@@ -95,9 +95,8 @@ export const AgentControllerApp = ({
     setmodalTitle(text);
     setID(id);
   }
-  //EuiBasicTable start here
   
-
+  //EuiBasicTable start here
   const store = createDataStore(ruleID, ruleName, ruleLength); //parse rule info to back end
 
   //table variables
@@ -118,7 +117,7 @@ export const AgentControllerApp = ({
     setSortDirection(sortDirection);
   };
 
-  const onSelectionChange = (selectedItems) => {//keeptrack of the selected rule items
+  const onSelectionChange = (selectedItems) => {//keep track of the selected rule items
     setSelectedItems(selectedItems);
   };
 
@@ -247,12 +246,11 @@ export const AgentControllerApp = ({
       name: "Actions",
       actions: [
         {
-          name: "Edit", //action
+          name: "Edit", //action for editing rule
           description: "Edit Rule",
           type: "icon",
           icon: "pencil",
           onClick: (e) => {
-            console.log(e.ruleName);
             showModal(e.ruleName, "Edit", e.id);
           }
         }
@@ -285,7 +283,7 @@ export const AgentControllerApp = ({
     }
   };
 
-  const selection = { //call the on selection change rule here
+  const selection = { //enable rules to be selected for deletion
     selectable: (rule) => rule.status,
     onSelectionChange: onSelectionChange
   };
@@ -294,7 +292,7 @@ export const AgentControllerApp = ({
 
   //rule tables end here
 
-  //get response from HTTP
+  //get response from API
   const [agentName, setName] = useState<string | undefined>();
   const [agentActive, setActive] = useState<boolean | undefined>();
   const [agentIP, setIP] = useState<string | undefined>();
@@ -303,7 +301,7 @@ export const AgentControllerApp = ({
   const [agentCPU, setCPU] = useState<string | undefined>();
   const [agentMemory, setMemory] = useState<string | undefined>();
 
-  //set and get from backend
+  //set and get string or int objects from API
   useEffect(() => {
     http.get(current_url).then((res) => {
       var name = res["name"];
@@ -354,7 +352,7 @@ export const AgentControllerApp = ({
         .catch(err => console.log("api Error: ", err));
       };
 
-      return(//render delete button if agent other than default is choosen
+      return(//render delete button if agent other than default is chosen
         <>
           <EuiButton color="danger" iconType="trash"  
           onClick={() => {
@@ -425,7 +423,7 @@ export const AgentControllerApp = ({
   const mainSideNav = () => {
     //sidenav variables
     const [isSideNavOpenOnMobile, setIsSideNavOpenOnMobile] = useState(false);
-    const [selectedItemName, setSelectedItem] = useState("default"); //variable to keeptrack of selected side nav
+    const [selectedItemName, setSelectedItem] = useState("default"); //variable to keep dtrack of selected side nav
     const history = useHistory();
     setService(history.location.pathname.replace(/.*\//, ""));//update service path
 
