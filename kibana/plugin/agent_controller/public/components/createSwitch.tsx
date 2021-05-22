@@ -5,7 +5,7 @@ import {
   EuiSpacer,
 } from '@elastic/eui';
 
-//activate Active switch
+//function for agent activation switch
 export const setActive_on_change = (e, current_url, setActive) => {
   fetch(current_url+"/status", {
     method: "POST",
@@ -24,7 +24,7 @@ export const setActive_on_change = (e, current_url, setActive) => {
     }) 
     .catch(err => console.log("api Error: ", err));
 }
-
+//function for service activation switch
 export const setServiceStatus_onchange = (e, current_url, setservicestatus, currentService) => {
   fetch(current_url+"/activeService", {
     method: "POST",
@@ -43,7 +43,7 @@ export const setServiceStatus_onchange = (e, current_url, setservicestatus, curr
     }) 
     .catch(err => console.log("api Error: ", err));
 }
-//activate Active Rule Switch
+//function for Rule activation Switch
 const setRuleStatus_on_change = (e, x, current_url, currentService, setAgentStatus, agentStatus) => {
   fetch(current_url+"/activeRule", {
     method: "POST",
@@ -64,7 +64,7 @@ const setRuleStatus_on_change = (e, x, current_url, currentService, setAgentStat
     .catch(err => console.log("api Error: ", err));
 }
 
-//loop rule switch
+//create switch for each rules 
 export const controlCenter = (ruleID, ruleName, current_url, currentService, setAgentStatus, agentStatus) => {
     let centerArr = [];
     let size  = 0;

@@ -1,4 +1,4 @@
-export const onChangeFilter_interface = (e, current_url, setAgentValue) => {
+export const onChangeFilter_interface = (e, current_url, setAgentValue) => { // catch selected item of Interface Filter
     fetch(current_url+"/interface", {
       method: "POST",
       headers: {
@@ -17,7 +17,7 @@ export const onChangeFilter_interface = (e, current_url, setAgentValue) => {
       .catch(err => console.log("api Error: ", err));
   }
   
-  export const onChangeFilter_frequency = (e, current_url, setFrequency) => {
+  export const onChangeFilter_frequency = (e, current_url, setFrequency) => {// catch selected item of Frequency filter
     fetch(current_url+"/time", {
       method: "POST",
       headers: {
