@@ -25,7 +25,7 @@ pipeline {
         stage('Build & Deploy') {
             steps {
                 echo 'Building & Deploying....'
-                sh '/usr/bin/docker-compose -p "elk" down -v'
+//                 sh '/usr/bin/docker-compose -p "elk" down -v'
                 sh 'TAG=${BUILD_NUMBER} /usr/bin/docker-compose -p "elk" up -d --build'   
             }
         }
