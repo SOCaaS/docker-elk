@@ -1,15 +1,16 @@
+//React Library
 import React, { useState, useEffect } from 'react';
 import { i18n } from '@kbn/i18n';
 import { FormattedMessage, I18nProvider } from '@kbn/i18n/react';
 import { BrowserRouter as Router, Route, Switch, useHistory} from 'react-router-dom';
 
 // customfile
-import { createDataStore } from "../data_store/data_store.ts";
+import { createDataStore } from "../data_store/data_store.ts"; // data Parser to the backend
 import { setActive_on_change, setServiceStatus_onchange, controlCenter } from "./createSwitch.tsx"
 import { myModal } from "./myModal.tsx"
 import { onChangeFilter_interface, onChangeFilter_frequency } from "./createfilter.tsx"
-// import { mainSideNav }  from './mainsidenav.tsx';
 
+//EUi Library
 import {
     EuiPage,
     EuiPageBody,
@@ -32,10 +33,11 @@ import {
     EuiHeaderLogo,
 } from '@elastic/eui';
 
+//Plugin Dependencies file 
 import { CoreStart } from '../../../../src/core/public';
 import { NavigationPublicPluginStart } from '../../../../src/plugins/navigation/public';
-
 import { PLUGIN_ID, PLUGIN_NAME } from '../../common';
+
 
 interface AgentControllerAppDeps {
   basename: string;
@@ -50,62 +52,62 @@ export const AgentControllerApp = ({
   http,
   navigation,
 }: AgentControllerAppDeps) => {
-  const default_url  = "/api/agent_controller/default";
-  const [current_url, setURL] = useState(default_url);
-  const [ruleID, setRuleID] = useState([]);
-  const [ruleName, setruleName] = useState([]);
-  const [ruleLength, setRuleLength] = useState<number | undefined>();
-  const [currentService, setService] = useState<string | undefined>();
-  const [agentStatus, setAgentStatus] = useState([]);
-  const [servicestatus, setservicestatus] = useState<boolean | undefined> ();
+  const default_url  = "/api/agent_controller/default"; //Plugin Default URL/Hoome page
+  const [current_url, setURL] = useState(default_url); // Url variable
+  const [ruleID, setRuleID] = useState([]); //Rule id
+  const [ruleName, setruleName] = useState([]); //Rule name Variable
+  const [ruleLength, setRuleLength] = useState<number | undefined>(); //rule's length variable
+  const [currentService, setService] = useState<string | undefined>();//variable to set service
+  const [agentStatus, setAgentStatus] = useState([]);//variable to store agent status
+  const [servicestatus, setservicestatus] = useState<boolean | undefined> ();// variable to store service status
 
   useEffect(() => {
-    http.get(current_url).then((res) => {
+    http.get(current_url).then((res) => { //get status detail and rules of particular service
       let ruleArr = [];
       let detailArr = [];
       let rules = [];
       let ruleStatus = [];
-      if(currentService == "tshark" ||  currentService == "suricata"){  
+      if(currentService == "tshark" ||  currentService == "suricata"){  //check if the service is either tshark or suricata
         rules = res["services"][currentService]["rules"];
         setservicestatus(res["services"][currentService]["active"])
         for (let i = 0; i < rules.length; i++) {
           ruleArr[i] = i + 1;
-          detailArr.push(rules[i]["details"]); 
-          ruleStatus.push(rules[i]["active"]); 
+          detailArr.push(rules[i]["details"]); //get rule detail
+          ruleStatus.push(rules[i]["active"]); //get rule status
         }
       }
-      setRuleID(ruleArr);
-      setruleName(detailArr);
-      setRuleLength(rules.length);
+      setRuleID(ruleArr);//set ruleID
+      setruleName(detailArr);//set rule detail
+      setRuleLength(rules.length);//set length of the table entries
       setAgentStatus(ruleStatus);
     });
   }, [currentService, current_url])
   
   //add and edit button
-  const [getID, setID] = useState("");
-  const [valueRule, setValueRule] = useState("");
+  const [getID, setID] = useState("");//get ids for editing rule
+  const [valueRule, setValueRule] = useState("");//rules value
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalTitle, setmodalTitle] = useState("");
 
-  const showModal = (rule, text, id) =>{
+  const showModal = (rule, text, id) =>{  //modal(UI) for editing or adding rules
     setIsModalVisible(true);
     setValueRule(rule);
     setmodalTitle(text);
     setID(id);
   }
-  //EuiBasicTable
   
+  //EuiBasicTable start here
+  const store = createDataStore(ruleID, ruleName, ruleLength); //parse rule info to back end
 
-  const store = createDataStore(ruleID, ruleName, ruleLength);
-
-  const [pageIndex, setPageIndex] = useState(0);
+  //table variables
+  const [pageIndex, setPageIndex] = useState(0); 
   const [pageSize, setPageSize] = useState(5);
-  const [sortField, setSortField] = useState("ruleID");
+  const [sortField, setSortField] = useState("ruleID"); 
   const [sortDirection, setSortDirection] = useState("asc");
   const [selectedItems, setSelectedItems] = useState([]);
   const [itemIdToExpandedRowMap, setItemIdToExpandedRowMap] = useState({});
 
-  const onTableChange = ({ page = {}, sort = {} }) => {
+  const onTableChange = ({ page = {}, sort = {} }) => {// catch table state 
     const { index: pageIndex, size: pageSize } = page;
     const { field: sortField, direction: sortDirection } = sort;
 
@@ -115,15 +117,16 @@ export const AgentControllerApp = ({
     setSortDirection(sortDirection);
   };
 
-  const onSelectionChange = (selectedItems) => {
+  const onSelectionChange = (selectedItems) => {//keep track of the selected rule items
     setSelectedItems(selectedItems);
   };
 
+  //delete function of the rule
   const onClickDelete = () => {
-    //reorder array entry based on ID value
+    //reorder array entry based on ID value after deletion
     let idArr = []
     for (let x = 0; x < selectedItems.length; x++){
-      idArr[x] = selectedItems[x]["ruleID"];
+      idArr[x] = selectedItems[x]["ruleID"]; 
       idArr.sort(function(a, b){return a - b});
     }
 
@@ -134,7 +137,7 @@ export const AgentControllerApp = ({
     let setnameArr = [];
 
     //loop fetch based on ID
-    for (let x = 0; x < selectedItems.length; x++){
+    for (let x = 0; x < selectedItems.length; x++){//linear search on the ID and delete
         fetch(current_url+"/deleteRule", {
           method: "POST",
           headers: {
@@ -172,7 +175,7 @@ export const AgentControllerApp = ({
     setruleName(setnameArr);
   };
 
-  const renderDeleteButton = () => {
+  const renderDeleteButton = () => {//render delete button if any of the item in rule table is selected
     if (selectedItems.length === 0) {
       return;
     }
@@ -183,7 +186,7 @@ export const AgentControllerApp = ({
     );
   };
 
-  const toggleDetails = (item) => {
+  const toggleDetails = (item) => {// show description of the table
     const itemIdToExpandedRowMapValues = { ...itemIdToExpandedRowMap };
     if (itemIdToExpandedRowMapValues[item.id]) {
       delete itemIdToExpandedRowMapValues[item.id];
@@ -200,19 +203,22 @@ export const AgentControllerApp = ({
     setItemIdToExpandedRowMap(itemIdToExpandedRowMapValues);
   };
 
+  //call function to find rules
   const { pageOfItems, totalItemCount } = store.findRules(
     pageIndex,
     pageSize,
     sortField,
     sortDirection
   );
-
+  
+  //call the render delete button
   const deleteButton = renderDeleteButton();
 
+  //column formating
   const columns = [
     {
       field: "ruleID",
-      name: "ID",
+      name: "ID",//labelID
       sortable: true,
       truncateText: true,
       mobileOptions: {
@@ -225,7 +231,7 @@ export const AgentControllerApp = ({
     },
     {
       field: "ruleName",
-      name: "Rule",
+      name: "Rule",//label rule
       sortable: true,
       truncateText: true,
       mobileOptions: {
@@ -240,12 +246,11 @@ export const AgentControllerApp = ({
       name: "Actions",
       actions: [
         {
-          name: "Edit",
+          name: "Edit", //action for editing rule
           description: "Edit Rule",
           type: "icon",
           icon: "pencil",
           onClick: (e) => {
-            console.log(e.ruleName);
             showModal(e.ruleName, "Edit", e.id);
           }
         }
@@ -264,30 +269,30 @@ export const AgentControllerApp = ({
     }
   ];
 
-  const pagination = {
+  const pagination = {//format the rule table pagination 
     pageIndex: pageIndex,
     pageSize: pageSize,
     totalItemCount: totalItemCount,
-    pageSizeOptions: [3, 5, 8]
+    pageSizeOptions: [3, 5, 8]// allow user to choose between number of rows for each table page
   };
 
-  const sorting = {
+  const sorting = {//sort called here
     sort: {
       field: sortField,
       direction: sortDirection
     }
   };
 
-  const selection = {
+  const selection = { //enable rules to be selected for deletion
     selectable: (rule) => rule.status,
-    // selectableMessage: (selectable) =>
-    //   !selectable ? "Rule is currently offline" : undefined,
     onSelectionChange: onSelectionChange
   };
 
-  const [position, setPosition] = useState("fixed");
+  const [position, setPosition] = useState("fixed");//table position
 
-  //get response from HTTP
+  //rule tables end here
+
+  //get response from API
   const [agentName, setName] = useState<string | undefined>();
   const [agentActive, setActive] = useState<boolean | undefined>();
   const [agentIP, setIP] = useState<string | undefined>();
@@ -296,7 +301,7 @@ export const AgentControllerApp = ({
   const [agentCPU, setCPU] = useState<string | undefined>();
   const [agentMemory, setMemory] = useState<string | undefined>();
 
-  //set and get from backend
+  //set and get string or int objects from API
   useEffect(() => {
     http.get(current_url).then((res) => {
       var name = res["name"];
@@ -310,17 +315,17 @@ export const AgentControllerApp = ({
       setMemory(res["memory"]);
     });
   }, [current_url])
-
+  // Agent Controller Logo
   const sections = [
     {
       items: [<EuiHeaderLogo>Agent Controller</EuiHeaderLogo>],
       borders: "right"
     }
   ];
-
+  //delete agent function
   const deleteAgent = () => {
     const history = useHistory();
-    const onClickDeleteAgent = () => {
+    const onClickDeleteAgent = () => {//API call for delete agent
       fetch(current_url+"/delete", {
         method: "POST",
         headers: {
@@ -347,7 +352,7 @@ export const AgentControllerApp = ({
         .catch(err => console.log("api Error: ", err));
       };
 
-      return(
+      return(//render delete button if agent other than default is chosen
         <>
           <EuiButton color="danger" iconType="trash"  
           onClick={() => {
@@ -363,31 +368,32 @@ export const AgentControllerApp = ({
   //get interface values, store in array
   const [agentInterface, setInterface] = useState([]);
   useEffect(() => {
-    http.get(current_url).then((res) => {
+    http.get(current_url).then((res) => {//call get api to get interface information of agent service
       let newArr = [];
       for (let i = 0; i < res["interfaces"].length; i++) {
-        newArr.push({ value: res["interfaces"][i], text: res["interfaces"][i] }); 
+        newArr.push({ value: res["interfaces"][i], text: res["interfaces"][i] });
       }
-      setInterface(newArr);
+      setInterface(newArr);//push the array to the interface filter array
     });
   }, [current_url])
 
   //get check frequency values, store in array
   const [agentFrequencies, setFrequencies] = useState([]);
   useEffect(() => {
-    http.get(current_url).then((res) => {
+    http.get(current_url).then((res) => {//call get api to get frequency information of agent service
       let newArr = [];
       for (let i = 0; i < res["times"].length; i++) {
         newArr.push({ value: res["times"][i], text: res["times"][i] }); 
       }
-      setFrequencies(newArr);
+      setFrequencies(newArr);//push the array to the frequency filter array
     });
   }, [current_url])
   
+  //side nav start here//
   //get sidenavdata values, store in array
   const [sideNavData, setsideNavData] = useState([]);
 
-  const getSideNavContent = () => {
+  const getSideNavContent = () => {//call get api to get the agent services in order to display them
     http.get('/api/agent_controller/sidenav_content').then((res) => {
       let newArr = [];
       for (let i = 0; i < res.length; i++) {
@@ -397,14 +403,14 @@ export const AgentControllerApp = ({
     });
   }
 
-  useEffect(() => {
+  useEffect(() => {//call the api to get sidenavigation content
     getSideNavContent();
     setInterval(() =>{
       getSideNavContent();
     }, 15000);
   }, [])
   
-  const path= (history) => {
+  const path= (history) => {//format pathing of the system
     let delete_first_slash = history.location.pathname.replace(/\//, "");
     let resPath = delete_first_slash.replace(/(\/\/[^\/]+)?\/.*/, '$1');
     if (resPath == "") {
@@ -413,17 +419,17 @@ export const AgentControllerApp = ({
       return resPath;
     }
   };
-
+  //implementation of mainsidenav
   const mainSideNav = () => {
-    
+    //sidenav variables
     const [isSideNavOpenOnMobile, setIsSideNavOpenOnMobile] = useState(false);
-    const [selectedItemName, setSelectedItem] = useState("default");
+    const [selectedItemName, setSelectedItem] = useState("default"); //variable to keep dtrack of selected side nav
     const history = useHistory();
-    setService(history.location.pathname.replace(/.*\//, ""));
+    setService(history.location.pathname.replace(/.*\//, ""));//update service path
 
     setURL("/api/agent_controller/"+path(history));
   
-    const toggleOpenOnMobile = () => {
+    const toggleOpenOnMobile = () => {//activate toggling sidenav content in mobile browser
       setIsSideNavOpenOnMobile(!isSideNavOpenOnMobile);
     };
 
@@ -445,12 +451,12 @@ export const AgentControllerApp = ({
         onClick: () => selectItem(id)
       };
     };
-       
+    //initializing the sidenav content   
     const sideNav = [
       createItem('Navigation', {
         icon: <EuiIcon type="menu" />,
         items: [
-            createItem("Default", {
+            createItem("Default", {//create the default agent and services
                 items: [
                     createItem('TShark', {}, "default/tshark"),
                     createItem('Suricata', {}, "default/suricata"),
@@ -460,7 +466,7 @@ export const AgentControllerApp = ({
     ]
     
     for (let x in sideNavData){
-      let agent_name = sideNavData[x]["fields"]["name"];
+      let agent_name = sideNavData[x]["fields"]["name"];//create the agent and services of the system
       let agent_id = sideNavData[x]["_id"];
       sideNav[0].items.push(
         createItem(
@@ -473,7 +479,7 @@ export const AgentControllerApp = ({
     }
     
     
-    return(
+    return(//HTML structure of side  nav
       <>
         <EuiSideNav
           mobileTitle={"Navigate On "+PLUGIN_NAME}

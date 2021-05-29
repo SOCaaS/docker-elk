@@ -15,7 +15,7 @@ import { times } from "../utils/utils";
 //   "Igor",
 // ];
 
-const createRules = (ruleID, ruleName, ruleLength) => {
+const createRules = (ruleID, ruleName, ruleLength) => { //function for adding rules into table
   return times(ruleLength, (index) => {
     return {
       id: index,
@@ -32,7 +32,7 @@ export const createDataStore = (ruleID, ruleName, ruleLength) => {
   return {
     rules,
 
-    findRules: (pageIndex, pageSize, sortField, sortDirection) => {
+    findRules: (pageIndex, pageSize, sortField, sortDirection) => {//function to find rules
       let items;
 
       if (sortField) {

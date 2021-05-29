@@ -13,23 +13,23 @@ import {
 
 } from '@elastic/eui';
 
-
+//saving modal function
 const saveModal = (current_url, currentService, getID, ruleID, ruleName, setruleName, setRuleID, setRuleLength, setIsModalVisible, modalTitle, valueRule) => {
   let data;
-  if(modalTitle == "Add"){
+  if(modalTitle == "Add"){//rule add modal
       data = {
           rule : valueRule,
-          service : currentService
+          service : currentService//get service
       }
   }
-  else if(modalTitle == "Edit"){
+  else if(modalTitle == "Edit"){// rule edit modal
     data = {
         rule : valueRule,
-        service : currentService,
-        id : getID + 1
+        service : currentService,//get service
+        id : getID + 1//id to be edited (parameter to be passed)
     }
   }
-  fetch(current_url+"/"+modalTitle.toLowerCase(), {
+  fetch(current_url+"/"+modalTitle.toLowerCase(), { //post to edit or add API based on the modalTitle
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -39,13 +39,15 @@ const saveModal = (current_url, currentService, getID, ruleID, ruleName, setrule
   })
     .then(response => response.json())
     .then(response => {
-        if(response.response["id"]){
+      //update rule into rule table array
+        if(response.response["id"]){//if id exists in response indicate the update id
           let detailArr = [...ruleName];
           detailArr[response.response["id"] - 1] = response.response["rule"]
           setruleName(detailArr);
         }
-        else{
-          let ruleArr = [...ruleID];
+        //add rule into rule table array
+        else{//no id's in response indicate a response from add api
+          let ruleArr = [...ruleID]; //copy 
           let detailArr = [...ruleName];
           detailArr.push(response.response["rule"]);
           let length = Math.abs(ruleArr.length - 1);
@@ -65,17 +67,17 @@ const saveModal = (current_url, currentService, getID, ruleID, ruleName, setrule
 setIsModalVisible(false);
 
 } 
-
+// Class for Modal
 export const myModal = (current_url, currentService, getID, ruleID, ruleName, setruleName, setRuleID, setRuleLength, isModalVisible, setIsModalVisible, modalTitle, setValueRule, valueRule) => {
   let modal;
   const closeModal = () => {
-    setIsModalVisible(false);
+    setIsModalVisible(false);//modal to close 
   }
   const onChangeText = (e) => {
     setValueRule(e.target.value);
   };
   if (isModalVisible) {
-    modal = (
+    modal = ( // Modal HTML structure
       <EuiModal
         onClose={() => {
           closeModal();
